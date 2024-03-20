@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
 from src.models.type_11_models.seir import direct_transmission_over_two_connected_subpopulations_seird_model
 from src.models.type_11_models.seir import direct_transmission_over_one_population_as_in_plos_paper
+from src.models.type_11_models.seir import simple_demographic_model
 from src.parameters.params import default_seir_params
 from src.parameters.params import initial_christian_population
 from src.parameters.params import initial_pagan_population
@@ -160,4 +161,87 @@ def proof_of_concept_solve_and_plot_ap_as_smallpox_over_two_subpopulations_in_em
     )
 
 
-proof_of_concept_solve_and_plot_ap_as_smallpox_over_two_subpopulations_in_empire()
+def proof_of_concept_solve_and_plot_basic_demographic_development_after_ap(
+        solution, start_year=190, end_year=248, parameters=default_seir_params
+):
+    """
+    Continues the simulation with a simple demographic model
+    using the final state from a previous model as the initial condition.
+
+    Parameters:
+    - solution: The solution object from the previous model.
+    - start_year: The starting year for the demographic model simulation.
+    - end_year: The ending year for the demographic model simulation.
+    - parameters: The parameters object for the demographic model.
+    """
+    # Initial conditions for the demographic model are the final state from the previous solution
+    # y0 = solution.y[:, -1]
+    compartments = solution.y[:, -1]
+    y0 = [max(0, compartment) for compartment in compartments]
+
+    # Timeframe of simulation for the demographic model
+    total_days = (end_year - start_year + 1) * 365
+    t = np.arange(0, total_days)
+
+    # Solve the demographic model ODE
+    def wrapper_for_solve_ivp_demographic(t, y):
+        return simple_demographic_model(y, t, parameters)
+    solution = solve_ivp(wrapper_for_solve_ivp_demographic, [0, total_days], y0, method='BDF', t_eval=t)
+
+    # Solution indices and labels relevant to both Christian and Pagan compartments
+    # (except for the A compartment, dead due to age and other natural causes).
+    # compartment_indices = [0, 1, 2, 3, 4, 6, 7, 8, 9, 10]
+    compartment_indices = [0, 6]
+    compartment_labels = [
+        'Susceptible Christians',
+        # 'Exposed Christians',
+        # 'Infected Christians',
+        # 'Recovered Christians',
+        # 'Deceased Christians',
+        'Susceptible Pagans',
+        # 'Exposed Pagans',
+        # 'Infected Pagans',
+        # 'Recovered Pagans',
+        # 'Deceased Pagans'
+    ]
+    plot_seir_model(
+        solution,
+        t,
+        start_year=start_year,
+        end_year=end_year,
+        compartment_indices=compartment_indices,
+        compartment_labels=compartment_labels,
+        every_nth_year=5,
+        y_tick_interval=100_000,
+        display_y_label_every_n_ticks=10,
+        plot_title='Demographic development after the Antonine Plague over two subpopulations in the whole Empire'
+    )
+
+
+def proof_of_concept_solve_and_plot_ap_as_smallpox_over_two_subpopulations_in_empire_and_continue_with_demographic_dev(
+        start_year=165,
+        end_year=189,
+        demographic_end_year=248,
+        initial_christian_population=initial_christian_population,
+        initial_pagan_population=initial_pagan_population
+):
+    # Initial conditions (Christian and Pagan populations defined in src.parameters.params)
+    y0 = [initial_christian_population - 1, 0, 1, 0, 0, 0, initial_pagan_population - 1, 0, 1, 0, 0, 0]
+
+    # Timeframe of simulation
+    total_days = (end_year - start_year + 1) * 365
+    t = np.arange(0, total_days)
+
+    # Solve the ODE for the Antonine Plague
+    def wrapper_for_solve_ivp(t, y):
+        return direct_transmission_over_two_connected_subpopulations_seird_model(y, t, default_seir_params)
+    solution_ap = solve_ivp(wrapper_for_solve_ivp, [0, total_days], y0, method='BDF', t_eval=t)
+
+    proof_of_concept_solve_and_plot_basic_demographic_development_after_ap(
+        solution_ap, end_year + 1, demographic_end_year, default_seir_params
+    )
+
+
+# proof_of_concept_solve_and_plot_ap_as_smallpox_over_two_subpopulations_in_empire()
+# proof_of_concept_solve_and_plot_ap_as_smallpox_in_rome()
+proof_of_concept_solve_and_plot_ap_as_smallpox_over_two_subpopulations_in_empire_and_continue_with_demographic_dev()
