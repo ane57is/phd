@@ -62,3 +62,32 @@ def direct_transmission_over_one_population_as_in_plos_paper(y, t, parameters):
 
     # Return the derivatives in the same order
     return [ds_c, de_c, di_c, dr_c, dd_c, da_c, ds_p, de_p, di_p, dr_p, dd_p, da_p]
+
+
+def simple_demographic_model(y, t, parameters):
+    s_c, e_c, i_c, r_c, d_c, a_c, s_p, e_p, i_p, r_p, d_p, a_p = y
+    b = parameters.natural_birth_rate
+    d = parameters.natural_death_rate
+
+    # Totals of subpopulations
+    n_c = s_c + e_c + i_c + r_c
+    n_p = s_p + e_p + i_p + r_p
+
+    # Christian compartments:
+    ds_c = b * n_c - d * s_c
+    de_c = -d * e_c
+    di_c = -d * i_c
+    dr_c = -d * r_c
+    dd_c = 0
+    da_c = d * n_c
+
+    # Pagan compartments:
+    ds_p = b * n_p - d * s_p
+    de_p = -d * e_p
+    di_p = -d * i_p
+    dr_p = -d * r_p
+    dd_p = 0
+    da_p = d * n_p
+
+    # Return the derivatives in the same order
+    return [ds_c, de_c, di_c, dr_c, dd_c, da_c, ds_p, de_p, di_p, dr_p, dd_p, da_p]
