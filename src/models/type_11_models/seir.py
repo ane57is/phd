@@ -93,7 +93,9 @@ def simple_demographic_model(y, t, parameters):
     return [ds_c, de_c, di_c, dr_c, dd_c, da_c, ds_p, de_p, di_p, dr_p, dd_p, da_p]
 
 
-def direct_transmission_over_two_connected_subpopulations_with_two_cfrs_seird_model(y, t, parameters):
+def direct_transmission_over_two_connected_subpopulations_with_two_cfrs_seird_model(
+    y, t, parameters
+):
     """
     Extension of direct_transmission_over_two_connected_subpopulations_seird_model with two CFRs.
     """

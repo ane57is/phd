@@ -1,8 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
-from src.models.type_11_models.seir import direct_transmission_over_two_connected_subpopulations_seird_model
-from src.models.type_11_models.seir import direct_transmission_over_one_population_as_in_plos_paper
+from src.models.type_11_models.seir import (
+    direct_transmission_over_two_connected_subpopulations_seird_model,
+)
+from src.models.type_11_models.seir import (
+    direct_transmission_over_one_population_as_in_plos_paper,
+)
 from src.models.type_11_models.seir import simple_demographic_model
 from src.parameters.params import default_seir_params
 from src.parameters.params import initial_christian_population
@@ -10,18 +14,18 @@ from src.parameters.params import initial_pagan_population
 
 
 def plot_seir_model(
-        solution,
-        t,
-        start_year,
-        end_year,
-        compartment_indices,
-        compartment_labels,
-        every_nth_year=5,  # TODO: rename to something more label-indicating
-        y_tick_interval=100_000,
-        display_y_label_every_n_ticks=1,
-        x_label='Time (years)',
-        y_label='Number of Individuals',
-        plot_title='SEIR Model Over Time'
+    solution,
+    t,
+    start_year,
+    end_year,
+    compartment_indices,
+    compartment_labels,
+    every_nth_year=5,  # TODO: rename to something more label-indicating
+    y_tick_interval=100_000,
+    display_y_label_every_n_ticks=1,
+    x_label="Time (years)",
+    y_label="Number of Individuals",
+    plot_title="SEIR Model Over Time",
 ):
     """
     Plots the compartments of an SEIR model given the solution object, time array,
@@ -63,7 +67,10 @@ def plot_seir_model(
     # Set up the y-axis with custom ticks based on the maximum value across specified compartments
     y_max = np.max([np.max(solution.y[i, :]) for i in compartment_indices])
     y_ticks = np.arange(0, y_max + y_tick_interval, y_tick_interval)
-    y_labels = [str(int(y)) if index % display_y_label_every_n_ticks == 0 else '' for index, y in enumerate(y_ticks)]
+    y_labels = [
+        str(int(y)) if index % display_y_label_every_n_ticks == 0 else ""
+        for index, y in enumerate(y_ticks)
+    ]
     ax.set_yticks(y_ticks)
     ax.set_yticklabels(y_labels)
 
@@ -77,7 +84,9 @@ def plot_seir_model(
     plt.show()
 
 
-def proof_of_concept_solve_and_plot_ap_as_smallpox_in_rome(start_year=165, end_year=189):
+def proof_of_concept_solve_and_plot_ap_as_smallpox_in_rome(
+    start_year=165, end_year=189
+):
     """
     Solve and plot the case of my PLOS ONE article as a proof of concept (showcase this approach works).
     """
@@ -91,18 +100,23 @@ def proof_of_concept_solve_and_plot_ap_as_smallpox_in_rome(start_year=165, end_y
 
     # Solve the ODE
     def wrapper_for_solve_ivp(t, y):
-        return direct_transmission_over_one_population_as_in_plos_paper(y, t, default_seir_params)
-    solution = solve_ivp(wrapper_for_solve_ivp, [0, total_days], y0, method='BDF', t_eval=t)
+        return direct_transmission_over_one_population_as_in_plos_paper(
+            y, t, default_seir_params
+        )
+
+    solution = solve_ivp(
+        wrapper_for_solve_ivp, [0, total_days], y0, method="BDF", t_eval=t
+    )
 
     # Solution indices and labels relevant only to the Pagan compartments
     # (except for the A compartment, dead due to age and other natural causes).
     compartment_indices = [6, 7, 8, 9, 10]
     compartment_labels = [
-        'Susceptible Pagans',
-        'Exposed Pagans',
-        'Infected Pagans',
-        'Recovered Pagans',
-        'Deceased Pagans'
+        "Susceptible Pagans",
+        "Exposed Pagans",
+        "Infected Pagans",
+        "Recovered Pagans",
+        "Deceased Pagans",
     ]
     plot_seir_model(
         solution,
@@ -110,18 +124,31 @@ def proof_of_concept_solve_and_plot_ap_as_smallpox_in_rome(start_year=165, end_y
         start_year=start_year,
         end_year=end_year,
         compartment_indices=compartment_indices,
-        compartment_labels=compartment_labels
+        compartment_labels=compartment_labels,
     )
 
 
 def proof_of_concept_solve_and_plot_ap_as_smallpox_over_two_subpopulations_in_empire(
-        start_year=165,
-        end_year=189,
-        initial_christian_population=initial_christian_population,
-        initial_pagan_population=initial_pagan_population
+    start_year=165,
+    end_year=189,
+    initial_christian_population=initial_christian_population,
+    initial_pagan_population=initial_pagan_population,
 ):
     # Initial conditions (Christian and Pagan populations defined in src.parameters.params)
-    y0 = [initial_christian_population - 1, 0, 1, 0, 0, 0, initial_pagan_population - 1, 0, 1, 0, 0, 0]
+    y0 = [
+        initial_christian_population - 1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        initial_pagan_population - 1,
+        0,
+        1,
+        0,
+        0,
+        0,
+    ]
 
     # Timeframe of simulation
     total_days = (end_year - start_year + 1) * 365
@@ -129,23 +156,28 @@ def proof_of_concept_solve_and_plot_ap_as_smallpox_over_two_subpopulations_in_em
 
     # Solve the ODE
     def wrapper_for_solve_ivp(t, y):
-        return direct_transmission_over_two_connected_subpopulations_seird_model(y, t, default_seir_params)
-    solution = solve_ivp(wrapper_for_solve_ivp, [0, total_days], y0, method='BDF', t_eval=t)
+        return direct_transmission_over_two_connected_subpopulations_seird_model(
+            y, t, default_seir_params
+        )
+
+    solution = solve_ivp(
+        wrapper_for_solve_ivp, [0, total_days], y0, method="BDF", t_eval=t
+    )
 
     # Solution indices and labels relevant to both Christian and Pagan compartments
     # (except for the A compartment, dead due to age and other natural causes).
     compartment_indices = [0, 1, 2, 3, 4, 6, 7, 8, 9, 10]
     compartment_labels = [
-        'Susceptible Christians',
-        'Exposed Christians',
-        'Infected Christians',
-        'Recovered Christians',
-        'Deceased Christians',
-        'Susceptible Pagans',
-        'Exposed Pagans',
-        'Infected Pagans',
-        'Recovered Pagans',
-        'Deceased Pagans'
+        "Susceptible Christians",
+        "Exposed Christians",
+        "Infected Christians",
+        "Recovered Christians",
+        "Deceased Christians",
+        "Susceptible Pagans",
+        "Exposed Pagans",
+        "Infected Pagans",
+        "Recovered Pagans",
+        "Deceased Pagans",
     ]
     plot_seir_model(
         solution,
@@ -157,12 +189,12 @@ def proof_of_concept_solve_and_plot_ap_as_smallpox_over_two_subpopulations_in_em
         every_nth_year=5,
         y_tick_interval=1_000_000,
         display_y_label_every_n_ticks=10,
-        plot_title='Antonine Plague as smallpox over two subpopulations in the whole Empire'
+        plot_title="Antonine Plague as smallpox over two subpopulations in the whole Empire",
     )
 
 
 def proof_of_concept_solve_and_plot_basic_demographic_development_after_ap(
-        solution, start_year=190, end_year=248, parameters=default_seir_params
+    solution, start_year=190, end_year=248, parameters=default_seir_params
 ):
     """
     Continues the simulation with a simple demographic model
@@ -186,19 +218,22 @@ def proof_of_concept_solve_and_plot_basic_demographic_development_after_ap(
     # Solve the demographic model ODE
     def wrapper_for_solve_ivp_demographic(t, y):
         return simple_demographic_model(y, t, parameters)
-    solution = solve_ivp(wrapper_for_solve_ivp_demographic, [0, total_days], y0, method='BDF', t_eval=t)
+
+    solution = solve_ivp(
+        wrapper_for_solve_ivp_demographic, [0, total_days], y0, method="BDF", t_eval=t
+    )
 
     # Solution indices and labels relevant to both Christian and Pagan compartments
     # (except for the A compartment, dead due to age and other natural causes).
     # compartment_indices = [0, 1, 2, 3, 4, 6, 7, 8, 9, 10]
     compartment_indices = [0, 6]
     compartment_labels = [
-        'Susceptible Christians',
+        "Susceptible Christians",
         # 'Exposed Christians',
         # 'Infected Christians',
         # 'Recovered Christians',
         # 'Deceased Christians',
-        'Susceptible Pagans',
+        "Susceptible Pagans",
         # 'Exposed Pagans',
         # 'Infected Pagans',
         # 'Recovered Pagans',
@@ -214,19 +249,32 @@ def proof_of_concept_solve_and_plot_basic_demographic_development_after_ap(
         every_nth_year=5,
         y_tick_interval=100_000,
         display_y_label_every_n_ticks=10,
-        plot_title='Demographic development after the Antonine Plague over two subpopulations in the whole Empire'
+        plot_title="Demographic development after the Antonine Plague over two subpopulations in the whole Empire",
     )
 
 
 def proof_of_concept_solve_and_plot_ap_as_smallpox_over_two_subpopulations_in_empire_and_continue_with_demographic_dev(
-        start_year=165,
-        end_year=189,
-        demographic_end_year=248,
-        initial_christian_population=initial_christian_population,
-        initial_pagan_population=initial_pagan_population
+    start_year=165,
+    end_year=189,
+    demographic_end_year=248,
+    initial_christian_population=initial_christian_population,
+    initial_pagan_population=initial_pagan_population,
 ):
     # Initial conditions (Christian and Pagan populations defined in src.parameters.params)
-    y0 = [initial_christian_population - 1, 0, 1, 0, 0, 0, initial_pagan_population - 1, 0, 1, 0, 0, 0]
+    y0 = [
+        initial_christian_population - 1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        initial_pagan_population - 1,
+        0,
+        1,
+        0,
+        0,
+        0,
+    ]
 
     # Timeframe of simulation
     total_days = (end_year - start_year + 1) * 365
@@ -234,14 +282,27 @@ def proof_of_concept_solve_and_plot_ap_as_smallpox_over_two_subpopulations_in_em
 
     # Solve the ODE for the Antonine Plague
     def wrapper_for_solve_ivp(t, y):
-        return direct_transmission_over_two_connected_subpopulations_seird_model(y, t, default_seir_params)
-    solution_ap = solve_ivp(wrapper_for_solve_ivp, [0, total_days], y0, method='BDF', t_eval=t)
+        return direct_transmission_over_two_connected_subpopulations_seird_model(
+            y, t, default_seir_params
+        )
+
+    solution_ap = solve_ivp(
+        wrapper_for_solve_ivp, [0, total_days], y0, method="BDF", t_eval=t
+    )
 
     proof_of_concept_solve_and_plot_basic_demographic_development_after_ap(
         solution_ap, end_year + 1, demographic_end_year, default_seir_params
     )
 
 
+def proof_of_concept_solve_and_plot_ap_as_smallpox_over_two_subpopulations_with_two_cfrs_in_empire(
+    start_year=165,
+    end_year=189,
+    initial_christian_population=initial_christian_population,
+    initial_pagan_population=initial_pagan_population,
+):
+    pass
+
+
 # proof_of_concept_solve_and_plot_ap_as_smallpox_over_two_subpopulations_in_empire()
 # proof_of_concept_solve_and_plot_ap_as_smallpox_in_rome()
-proof_of_concept_solve_and_plot_ap_as_smallpox_over_two_subpopulations_in_empire_and_continue_with_demographic_dev()
