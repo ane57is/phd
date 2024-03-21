@@ -9,12 +9,30 @@ demographic_params = {
 
 
 class BaseModelParameters():
-    def __init__(self, beta, sigma, gamma, fatality_rate, natural_birth_rate, natural_death_rate):
+    def __init__(
+        self,
+        beta,
+        sigma,
+        gamma,
+        natural_birth_rate,
+        natural_death_rate,
+        fatality_rate=None,
+        fatality_rate_p=None,
+        fatality_rate_c=None
+    ):
         # Disease-specific parameters
         self.beta = beta
         self.sigma = sigma
         self.gamma = gamma
-        self.fatality_rate = fatality_rate
+
+        if fatality_rate is not None:
+            self.fatality_rate = fatality_rate
+            self.fatality_rate_p = fatality_rate
+            self.fatality_rate_c = fatality_rate
+        else:
+            self.fatality_rate_p = fatality_rate_p if fatality_rate_p is not None else 0
+            self.fatality_rate_c = fatality_rate_c if fatality_rate_c is not None else (self.fatality_rate_p / 3)
+
 
         # Demographic parameters of humans
         self.natural_birth_rate = natural_birth_rate
