@@ -6,11 +6,13 @@ from src.models.type_11_models.seir import (
     direct_transmission_over_one_population_as_in_plos_paper,
     direct_transmission_over_two_connected_subpopulations_with_two_cfrs_seird_model,
     simple_demographic_model,
+    simple_demographic_model_with_conversion,
 )
 from src.parameters.params import (
     default_seir_params,
     default_two_cfrs_params,
     measles_seir_params,
+    smallpox_seir_params_with_starks_conversion,
 )
 from src.parameters.params import initial_christian_population
 from src.parameters.params import initial_pagan_population
@@ -494,4 +496,101 @@ def proof_of_concept_solve_and_plot_ap_demography_and_cp_with_two_subpopulations
     )
 
 
+def proof_of_concept_solve_and_plot_ap_only_demographic_development_with_conversion_in_empire(
+    start_year=165,
+    end_year=270,
+    initial_christian_population=initial_christian_population,
+    initial_pagan_population=initial_pagan_population,
+):
+    # Initial conditions (Christian and Pagan populations defined in src.parameters.params)
+    y0 = [
+        initial_christian_population,
+        0,
+        0,
+        0,
+        0,
+        0,
+        initial_pagan_population,
+        0,
+        0,
+        0,
+        0,
+        0,
+    ]
+
+    # Timeframe of simulation
+    total_days = (end_year - start_year + 1) * 365
+    t = np.arange(0, total_days)
+
+    # Solve the ODE for the Antonine Plague
+    def wrapper_for_solve_ivp(t, y):
+        return simple_demographic_model_with_conversion(
+            y, t, smallpox_seir_params_with_starks_conversion
+        )
+
+    solution = solve_ivp(
+        wrapper_for_solve_ivp, [0, total_days], y0, method="BDF", t_eval=t
+    )
+
+    # Solution indices and labels relevant to both Christian and Pagan compartments
+    # (except for the A compartment, dead due to age and other natural causes).
+    compartment_indices = [0, 1, 2, 3, 4, 6, 7, 8, 9, 10]
+    compartment_labels = [
+        "Susceptible Christians",
+        "Exposed Christians",
+        "Infected Christians",
+        "Recovered Christians",
+        "Deceased Christians",
+        "Susceptible Pagans",
+        "Exposed Pagans",
+        "Infected Pagans",
+        "Recovered Pagans",
+        "Deceased Pagans",
+    ]
+    plot_seir_model(
+        solution,
+        t,
+        start_year=start_year,
+        end_year=end_year,
+        compartment_indices=compartment_indices,
+        compartment_labels=compartment_labels,
+        every_nth_year=5,
+        y_tick_interval=1_000_000,
+        display_y_label_every_n_ticks=10,
+        plot_title="Antonine Plague as no disease but instead conversion from P to C in the whole Empire",
+    )
+
+    # Print the final values of each compartment for debugging purposes
+    compartments_after_conversion = solution.y[:, -1]
+
+    s_c = compartments_after_conversion[0]
+    e_c = compartments_after_conversion[1]
+    i_c = compartments_after_conversion[2]
+    r_c = compartments_after_conversion[3]
+    d_c = compartments_after_conversion[4]
+    a_c = compartments_after_conversion[5]
+    s_p = compartments_after_conversion[6]
+    e_p = compartments_after_conversion[7]
+    i_p = compartments_after_conversion[8]
+    r_p = compartments_after_conversion[9]
+    d_p = compartments_after_conversion[10]
+    a_p = compartments_after_conversion[11]
+
+    print(
+        f"s_c = {s_c}\n"
+        f"e_c = {e_c}\n"
+        f"i_c = {i_c}\n"
+        f"r_c = {r_c}\n"
+        f"d_c = {d_c}\n"
+        f"a_c = {a_c}\n"
+        f"s_p = {s_p}\n"
+        f"e_p = {e_p}\n"
+        f"i_p = {i_p}\n"
+        f"r_p = {r_p}\n"
+        f"d_p = {d_p}\n"
+        f"a_p = {a_p}"
+    )
+
+
 # proof_of_concept_solve_and_plot_ap_demography_and_cp_with_two_subpopulations_and_smaller_cfrs_for_christians()
+proof_of_concept_solve_and_plot_ap_only_demographic_development_with_conversion_in_empire()
