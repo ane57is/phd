@@ -133,6 +133,7 @@ def direct_transmission_over_two_connected_subpopulations_with_two_cfrs_seird_mo
     # Return the derivatives in the same order
     return [ds_c, de_c, di_c, dr_c, dd_c, da_c, ds_p, de_p, di_p, dr_p, dd_p, da_p]
 
+
 def simple_demographic_model_with_conversion(y, t, parameters):
     s_c, e_c, i_c, r_c, d_c, a_c, s_p, e_p, i_p, r_p, d_p, a_p = y
     b = parameters.natural_birth_rate
@@ -191,4 +192,27 @@ def direct_transmission_over_two_connected_subpopulations_with_two_cfrs_and_conv
     n_p = s_p + e_p + i_p + r_p
     n = n_c + n_p
 
-    # TODO: finish after making a model of conversion applied to a disease-less scenario
+    # Pagans converted to Christianity for all living compartments:
+    converted_s = conversion_rate * s_c
+    converted_e = conversion_rate * e_c
+    converted_i = conversion_rate * i_c
+    converted_r = conversion_rate * r_c
+
+    # Christian compartments:
+    ds_c = b * n_c - beta * s_c * (i_c + i_p) / n - d * s_c + converted_s
+    de_c = beta * s_c * (i_c + i_p) / n - sigma * e_c - d * e_c + converted_e
+    di_c = sigma * e_c - gamma * i_c - d * i_c + converted_i
+    dr_c = (1 - fatality_rate_c) * gamma * i_c - d * r_c + converted_r
+    dd_c = fatality_rate_c * gamma * i_c
+    da_c = d * n_c
+
+    # Pagan compartments:
+    ds_p = b * n_p - beta * s_p * (i_c + i_p) / n - d * s_p - converted_s
+    de_p = beta * s_p * (i_c + i_p) / n - sigma * e_p - d * e_p - converted_e
+    di_p = sigma * e_p - gamma * i_p - d * i_p - converted_i
+    dr_p = (1 - fatality_rate_p) * gamma * i_p - d * r_p - converted_r
+    dd_p = fatality_rate_p * gamma * i_p
+    da_p = d * n_p
+
+    # Return the derivatives in the same order
+    return [ds_c, de_c, di_c, dr_c, dd_c, da_c, ds_p, de_p, di_p, dr_p, dd_p, da_p]

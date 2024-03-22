@@ -76,6 +76,9 @@ default_two_cfrs_params = BaseModelParameters(
 measles_seir_params = BaseModelParameters(
     beta=1.175, sigma=1 / 10, gamma=1 / 13.5, fatality_rate=0.3, **demographic_params
 )
+measles_seir_params_with_lower_cfr_for_c_and_conversion = BaseModelParameters(
+    beta=1.175, sigma=1 / 10, gamma=1 / 13.5, fatality_rate_p=0.3, conversion_rate_decennial=0.4, **demographic_params
+)
 smallpox_seir_params_with_starks_conversion = BaseModelParameters(
     beta=0.584, sigma=1 / 12, gamma=1 / 9.5, fatality_rate_p=0.9, conversion_rate_decennial=0.4, **demographic_params
 )
