@@ -46,7 +46,7 @@ class BaseModelParameters:
 default_seir_params = BaseModelParameters(
     beta=0.584, sigma=1 / 12, gamma=1 / 9.5, fatality_rate=0.9, **demographic_params
 )
-default_three_cfrs_params = BaseModelParameters(
+default_two_cfrs_params = BaseModelParameters(
     beta=0.584, sigma=1 / 12, gamma=1 / 9.5, fatality_rate_p=0.9, **demographic_params
 )
 # smallpox_seir_params = SmallpoxSEIRParams(beta=0.4, sigma=0.1, gamma=0.05, fatality_rate=0.3, **demographic_params)
