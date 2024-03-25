@@ -26,6 +26,18 @@ class BaseModelParameters:
         self.sigma = sigma
         self.gamma = gamma
 
+        # TODO: check if it makes sense to always have 3 variables as such:
+        # - fatality_rate
+        # - fatality_rate_treated or fatality_rate_nursing
+        # - fatality_rate_stark_christian
+        #
+        # This way I could have only one BaseModelParameters instance per disease, and based on the model
+        # I would use only some of the parameters:
+        # - in the simple one just fatality_rate for both Pagans and Christians
+        # - in the 1.1 models (nursing/treatment for Christians) fatality_rate_treated or _nursing as
+        #   fatality_rate_c and the basic fatality_rate as fatality_rate_p
+        # - in the 1.2 models fatality_rate_stark_christian as fatality_rate_c and fatality_rate as fatality_rate_p
+
         if fatality_rate is not None:
             self.fatality_rate = fatality_rate
             self.fatality_rate_p = fatality_rate
