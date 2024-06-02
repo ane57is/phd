@@ -1,10 +1,32 @@
-initial_christian_population = 40_000
-initial_pagan_population = 60_000_000
-
 # Demographic parameters and initial populations shared across models
 demographic_params = {
     "natural_birth_rate": 1 / (25 * 365),
     "natural_death_rate": 1 / (25 * 365),
+}
+
+# Total initial population
+initial_christian_population = 40_000
+initial_pagan_population = 60_000_000
+
+# Initial populations for each zone:
+# - "[Z]one 1 consists of the largest urban centers and their immediate hinterlands, the army and other highly mobile
+#   portions of the population. The population of Zone 1 begins with 10 million, an initial interaction rate of 12 and
+#   the 100 infected individuals" (Zelener 2003: 96).
+# - "[Z]one 2 consists of smaller cities and the most densely populated regions, such as Egypt, Italy and coastal Asia
+#   Minor. The initial population in Zone 2 is 20 million and the initial interaction rate is 9" (Zelener 2003: 96).
+# - "[Z]one 3 consists of less dense regions, such as the Western provinces and the Danube region, with an initial
+#   population of 20 million and an interaction rate of 8" (Zelener 2003: 96).
+# - "[Z]one 4 has the remaining population of 10 million, an interaction rate of 7 and represents the most remote
+#   regions of the Roman world, for example, Britain and Mauretania" (Zelener 2003: 96).
+initial_populations_in_zones = {
+    "initial_christian_population_zone_1": 6_667,
+    "initial_pagan_population_zone_1": 10_000_000,
+    "initial_christian_population_zone_2": 13_333,
+    "initial_pagan_population_zone_2": 20_000_000,
+    "initial_christian_population_zone_3": 13_333,
+    "initial_pagan_population_zone_3": 20_000_000,
+    "initial_christian_population_zone_4": 6_667,
+    "initial_pagan_population_zone_4": 10_000_000,
 }
 
 
