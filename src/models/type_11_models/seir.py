@@ -224,7 +224,8 @@ def direct_transmission_over_four_pairs_of_connected_subpopulations_with_two_cfr
     """
     Extension of direct_transmission_over_two_connected_subpopulations_with_two_cfrs_and_conversion_seird_model by
     four zones. Each zone has a pair of Christian and Pagan subpopulations. Each pair of subpopulations has a conversion
-    rate mechanism.
+    rate mechanism. Within pairs of connected subpopulations (inside of four separate zones) a dynamic interaction rate
+    modifies the impact of beta (the transmission rate).
     """
 
     (

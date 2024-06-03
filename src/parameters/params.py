@@ -33,9 +33,9 @@ initial_populations_in_zones = {
 class BaseModelParameters:
     def __init__(
         self,
-        beta,
-        sigma,
-        gamma,
+        beta,  # transmission rate
+        sigma,  # incubation period
+        gamma,  # infectious period
         natural_birth_rate,
         natural_death_rate,
         fatality_rate=None,
