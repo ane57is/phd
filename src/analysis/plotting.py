@@ -1070,6 +1070,56 @@ def proof_of_concept_solve_and_plot_ap_demo_cp_with_conversion_and_smaller_cfr_f
         plot_title="CP in 4 separate zones as measles with smaller CFR for C and conversion in the whole Empire (after AP and demo)",
     )
 
+    # Function to plot the totals of compartments
+    def plot_total_compartments():
+        total_compartment_labels = [
+            "Susceptible Christians",
+            "Exposed Christians",
+            "Infected Christians",
+            "Recovered Christians",
+            "Deceased Christians",
+            "Susceptible Pagans",
+            "Exposed Pagans",
+            "Infected Pagans",
+            "Recovered Pagans",
+            "Deceased Pagans",
+        ]
+
+        # Calculate the total compartments for each group
+        susceptible_christians = solution_cp.y[0, :] + solution_cp.y[12, :] + solution_cp.y[24, :] + solution_cp.y[36, :]
+        exposed_christians = solution_cp.y[1, :] + solution_cp.y[13, :] + solution_cp.y[25, :] + solution_cp.y[37, :]
+        infected_christians = solution_cp.y[2, :] + solution_cp.y[14, :] + solution_cp.y[26, :] + solution_cp.y[38, :]
+        recovered_christians = solution_cp.y[3, :] + solution_cp.y[15, :] + solution_cp.y[27, :] + solution_cp.y[39, :]
+        deceased_christians = solution_cp.y[4, :] + solution_cp.y[16, :] + solution_cp.y[28, :] + solution_cp.y[40, :]
+
+        susceptible_pagans = solution_cp.y[6, :] + solution_cp.y[18, :] + solution_cp.y[30, :] + solution_cp.y[42, :]
+        exposed_pagans = solution_cp.y[7, :] + solution_cp.y[19, :] + solution_cp.y[31, :] + solution_cp.y[43, :]
+        infected_pagans = solution_cp.y[8, :] + solution_cp.y[20, :] + solution_cp.y[32, :] + solution_cp.y[44, :]
+        recovered_pagans = solution_cp.y[9, :] + solution_cp.y[21, :] + solution_cp.y[33, :] + solution_cp.y[45, :]
+        deceased_pagans = solution_cp.y[10, :] + solution_cp.y[22, :] + solution_cp.y[34, :] + solution_cp.y[46, :]
+
+        total_compartments = [
+            susceptible_christians, exposed_christians, infected_christians, recovered_christians, deceased_christians,
+            susceptible_pagans, exposed_pagans, infected_pagans, recovered_pagans, deceased_pagans
+        ]
+
+        # Plot the totals
+        plot_seir_model(
+            solution_cp,
+            t_cp,
+            start_year=end_year_demographic,
+            end_year=end_year_cp,
+            compartment_indices=range(len(total_compartments)),
+            compartment_labels=total_compartment_labels,
+            every_nth_year=5,
+            y_tick_interval=100_000,
+            display_y_label_every_n_ticks=10,
+            plot_title="Total compartments across all zones",
+        )
+
+    # Call the function to plot totals
+    plot_total_compartments()
+
     # Print the final values of each compartment for debugging purposes
     compartments_after_conversion = solution_cp.y[:, -1]
 
