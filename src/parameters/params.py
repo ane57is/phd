@@ -30,6 +30,41 @@ initial_populations_in_zones = {
 }
 
 
+# Initial interaction rates in the 4-zone model
+zeleners_initial_delta_1 = 12
+zeleners_initial_delta_2 = 9
+zeleners_initial_delta_3 = 8
+zeleners_initial_delta_4 = 7
+
+
+def adjust_delta(delta_prev, delta_0, s_n, i_n, r_n, increment=0.1, threshold=10):
+    """
+    Adjusts the interaction rate delta dynamically based on Zelener's equations.
+
+    Parameters:
+    - delta_prev: Previous interaction rate delta (delta_{n-1}).
+    - delta_0: Initial maximum delta value.
+    - s_n: Susceptible population in the zone.
+    - i_n: Currently infected population.
+    - r_n: Recovered/immune population.
+    - increment: Increment step for delta adjustment.
+    - threshold: Threshold value for S_n / D_n.
+
+    Returns:
+    - Updated interaction rate delta_n.
+    """
+    if i_n > 0 and s_n / i_n > threshold:  # Zelener's S_n / D_n > 10
+        delta_n = min(delta_0, delta_prev + increment)
+    elif r_n > 0 and s_n / r_n < threshold:  # S_n / I_n < 10
+        delta_n = s_n / r_n
+    elif i_n > 0:  # Zelener's default to S_n / D_n
+        delta_n = s_n / i_n
+    else:  # No infected individuals; use previous delta
+        delta_n = delta_prev
+
+    return delta_n
+
+
 class BaseModelParameters:
     def __init__(
         self,
@@ -38,6 +73,11 @@ class BaseModelParameters:
         gamma,  # infectious period
         natural_birth_rate,
         natural_death_rate,
+        initial_delta_1=None,  # interaction rate in zone 1
+        initial_delta_2=None,  # interaction rate in zone 2
+        initial_delta_3=None,  # interaction rate in zone 3
+        initial_delta_4=None,  # interaction rate in zone 4
+        unified_deltas=None,  # use unified deltas for both Christian and Pagan compartments
         fatality_rate=None,
         fatality_rate_p=None,
         fatality_rate_c=None,
@@ -47,6 +87,13 @@ class BaseModelParameters:
         self.beta = beta
         self.sigma = sigma
         self.gamma = gamma
+
+        # Interaction rates
+        self.initial_delta_1 = initial_delta_1
+        self.initial_delta_2 = initial_delta_2
+        self.initial_delta_3 = initial_delta_3
+        self.initial_delta_4 = initial_delta_4
+        self.unified_deltas = unified_deltas
 
         if fatality_rate is not None:
             self.fatality_rate = fatality_rate
@@ -102,5 +149,15 @@ measles_seir_params_with_lower_cfr_for_c_and_starks_conversion = BaseModelParame
     beta=1.175, sigma=1 / 10, gamma=1 / 13.5, fatality_rate_p=0.3, conversion_rate_decennial=0.4, **demographic_params
 )
 smallpox_seir_params_with_starks_conversion = BaseModelParameters(
-    beta=0.584, sigma=1 / 12, gamma=1 / 9.5, fatality_rate_p=0.9, conversion_rate_decennial=0.4, **demographic_params
+    beta=0.584,
+    sigma=1 / 12,
+    gamma=1 / 9.5,
+    initial_delta_1=zeleners_initial_delta_1,
+    initial_delta_2=zeleners_initial_delta_2,
+    initial_delta_3=zeleners_initial_delta_3,
+    initial_delta_4=zeleners_initial_delta_4,
+    unified_deltas=True,
+    fatality_rate_p=0.9,
+    conversion_rate_decennial=0.4,
+    **demographic_params
 )
