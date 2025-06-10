@@ -37,7 +37,7 @@ zeleners_initial_delta_3 = 8
 zeleners_initial_delta_4 = 7
 
 
-def adjust_delta(delta_prev, delta_0, s_n, i_n, r_n, increment=0.1, threshold=10):
+def adjust_delta(delta_prev, delta_0, s_n, i_n, r_n, increment=0.1, threshold=10, max_delta=12):
     """
     Adjusts the interaction rate delta dynamically based on Zelener's equations.
 
@@ -53,16 +53,23 @@ def adjust_delta(delta_prev, delta_0, s_n, i_n, r_n, increment=0.1, threshold=10
     Returns:
     - Updated interaction rate delta_n.
     """
+    epsilon = 1e-4  # small value to prevent division by zero
+
+    if i_n <= 0 and r_n <= 0:
+        return delta_prev
     if i_n > 0 and s_n / i_n > threshold:  # Zelener's S_n / D_n > 10
         delta_n = min(delta_0, delta_prev + increment)
     elif r_n > 0 and s_n / r_n < threshold:  # S_n / I_n < 10
-        delta_n = s_n / r_n
+        # delta_n = s_n / r_n
+        delta_n = s_n / max(r_n, epsilon)
     elif i_n > 0:  # Zelener's default to S_n / D_n
-        delta_n = s_n / i_n
+        # delta_n = s_n / i_n
+        delta_n = s_n / max(i_n, epsilon)
     else:  # No infected individuals; use previous delta
         delta_n = delta_prev
 
-    return delta_n
+    return max(0.01, min(delta_n, max_delta))
+    # return max(delta_0, min(delta_n, max_delta))
 
 
 class BaseModelParameters:
@@ -82,6 +89,7 @@ class BaseModelParameters:
         fatality_rate_p=None,
         fatality_rate_c=None,
         conversion_rate_decennial=None,
+        max_delta=None,
     ):
         # Disease-specific parameters
         self.beta = beta
@@ -94,6 +102,7 @@ class BaseModelParameters:
         self.initial_delta_3 = initial_delta_3
         self.initial_delta_4 = initial_delta_4
         self.unified_deltas = unified_deltas
+        self.max_delta = max_delta
 
         if fatality_rate is not None:
             self.fatality_rate = fatality_rate
@@ -153,6 +162,7 @@ measles_seir_params_with_lower_cfr_for_c_and_starks_conversion = BaseModelParame
     initial_delta_2=zeleners_initial_delta_2,
     initial_delta_3=zeleners_initial_delta_3,
     initial_delta_4=zeleners_initial_delta_4,
+    max_delta=12,
     unified_deltas=True,
     fatality_rate_p=0.3,
     conversion_rate_decennial=0.4,
@@ -166,6 +176,7 @@ smallpox_seir_params_with_starks_conversion = BaseModelParameters(
     initial_delta_2=zeleners_initial_delta_2,
     initial_delta_3=zeleners_initial_delta_3,
     initial_delta_4=zeleners_initial_delta_4,
+    max_delta=12,
     unified_deltas=True,
     fatality_rate_p=0.9,
     conversion_rate_decennial=0.4,
