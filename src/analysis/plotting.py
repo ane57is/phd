@@ -2689,6 +2689,9 @@ def poc_solve_and_plot_ap_demo_cp_with_converstion_to_denser_of_four_zones_and_s
     alive4_p = s4_p + e4_p + i4_p + r4_p
 
     alive_total = alive1_c + alive1_p + alive2_c + alive2_p + alive3_c + alive3_p + alive4_c + alive4_p
+    alive_c = alive1_c + alive2_c + alive3_c + alive4_c
+    alive_p = alive1_p + alive2_p + alive3_p + alive4_p
+    alive_c_percentage_of_p = (alive_c / alive_p) * 100
 
     print(
         f"s1_c = {s1_c}\n"
@@ -2748,6 +2751,9 @@ def poc_solve_and_plot_ap_demo_cp_with_converstion_to_denser_of_four_zones_and_s
         f"alive4_c = {alive4_c}\n"
         f"alive4_p = {alive4_p}\n"
         f"alive_total = {alive_total}\n"
+        f"alive_c = {alive_c}\n"
+        f"alive_p = {alive_p}\n"
+        f"alive_c_percentage_of_p = {alive_c_percentage_of_p} %\n"
     )
 
     print("Length of t_cp:", len(t_cp))
