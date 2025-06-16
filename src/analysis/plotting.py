@@ -12,6 +12,7 @@ from src.models.type_11_models.seir import (
     simple_demographic_model_subpopulation_pairs_with_conversion_in_four_zones,
     direct_transmission_with_four_dynamic_deltas_two_cfrs_and_conversion_in_pairs_seird_model,
     direct_transmission_with_four_deltas_two_cfrs_and_conversion_in_pairs_seird_model,
+    simple_demographic_model_subpopulation_pairs_with_conversion_to_dense_zones,
     direct_transmission_over_four_pairs_of_connected_subpopulations_with_two_cfrs_and_converts_to_dense_zones_seird_model
 )
 from src.parameters.params import (
@@ -2362,7 +2363,7 @@ def poc_solve_and_plot_ap_demo_cp_with_converstion_to_denser_of_four_zones_and_s
 
     # Solve the demographic model ODE
     def wrapper_for_solve_ivp_demographic(t, y):
-        return simple_demographic_model_subpopulation_pairs_with_conversion_in_four_zones(
+        return simple_demographic_model_subpopulation_pairs_with_conversion_to_dense_zones(
             y, t, smallpox_seir_params_with_starks_conversion
         )
 
@@ -2691,7 +2692,7 @@ def poc_solve_and_plot_ap_demo_cp_with_converstion_to_denser_of_four_zones_and_s
     alive_total = alive1_c + alive1_p + alive2_c + alive2_p + alive3_c + alive3_p + alive4_c + alive4_p
     alive_c = alive1_c + alive2_c + alive3_c + alive4_c
     alive_p = alive1_p + alive2_p + alive3_p + alive4_p
-    alive_c_percentage_of_p = (alive_c / alive_p) * 100
+    alive_c_percentage_of_total = (alive_c / alive_total) * 100
 
     print(
         f"s1_c = {s1_c}\n"
@@ -2753,7 +2754,7 @@ def poc_solve_and_plot_ap_demo_cp_with_converstion_to_denser_of_four_zones_and_s
         f"alive_total = {alive_total}\n"
         f"alive_c = {alive_c}\n"
         f"alive_p = {alive_p}\n"
-        f"alive_c_percentage_of_p = {alive_c_percentage_of_p} %\n"
+        f"alive_c_percentage_of_total = {alive_c_percentage_of_total} %\n"
     )
 
     print("Length of t_cp:", len(t_cp))
