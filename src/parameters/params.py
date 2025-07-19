@@ -194,3 +194,81 @@ smallpox_seir_params_with_starks_conversion = BaseModelParameters(
     conversion_rate_decennial=0.4,
     **demographic_params
 )
+smallpox_seir_params_with_starks_conversion_and_2_cfrs_from_literature = BaseModelParameters(
+    beta=0.584,
+    sigma=1 / 12,
+    gamma=1 / 9.5,
+    initial_delta_1=zeleners_initial_delta_1,
+    initial_delta_2=zeleners_initial_delta_2,
+    initial_delta_3=zeleners_initial_delta_3,
+    initial_delta_4=zeleners_initial_delta_4,
+    max_delta=12,
+    unified_deltas=True,
+    fatality_rate_p=0.9,
+    fatality_rate_c=0.3,  # lower CFR based on literature
+    conversion_rate_decennial=0.4,
+    **demographic_params
+)
+measles_seir_params_with_starks_conversion_and_2_cfrs_from_literature = BaseModelParameters(
+    beta=1.175,
+    sigma=1 / 10,
+    gamma=1 / 13.5,
+    initial_delta_1=zeleners_initial_delta_1,
+    initial_delta_2=zeleners_initial_delta_2,
+    initial_delta_3=zeleners_initial_delta_3,
+    initial_delta_4=zeleners_initial_delta_4,
+    max_delta=12,
+    unified_deltas=True,
+    fatality_rate_p=0.34,
+    fatality_rate_c=0.03,  # lower CFR based on literature
+    conversion_rate_decennial=0.4,
+    **demographic_params
+)
+
+cchf_seir_params_with_starks_conversion_and_2_cfrs_from_literature = BaseModelParameters(
+    beta=0.5,
+    sigma=1 / 9,
+    gamma=1 / 3,
+    initial_delta_1=zeleners_initial_delta_1,
+    initial_delta_2=zeleners_initial_delta_2,
+    initial_delta_3=zeleners_initial_delta_3,
+    initial_delta_4=zeleners_initial_delta_4,
+    max_delta=12,
+    unified_deltas=True,
+    fatality_rate_p=0.4,  # CFR based on literature
+    fatality_rate_c=0.1,  # CFR based on literature
+    conversion_rate_decennial=0.4,
+    **demographic_params
+)
+
+evd_seir_params_with_starks_conversion_and_2_cfrs_from_literature = BaseModelParameters(
+    beta=0.243,
+    sigma=1 / 12.7,
+    gamma=1 / 10.1,
+    initial_delta_1=zeleners_initial_delta_1,
+    initial_delta_2=zeleners_initial_delta_2,
+    initial_delta_3=zeleners_initial_delta_3,
+    initial_delta_4=zeleners_initial_delta_4,
+    max_delta=12,
+    unified_deltas=True,
+    fatality_rate_p=0.89,  # CFR based on literature
+    fatality_rate_c=0.41,  # CFR based on literature
+    conversion_rate_decennial=0.4,
+    **demographic_params
+)
+
+lassa_seir_params_with_starks_conversion_and_2_cfrs_from_literature = BaseModelParameters(
+    beta=0.001085,
+    sigma=1 / 10.25,
+    gamma=1 / 14,
+    initial_delta_1=zeleners_initial_delta_1,
+    initial_delta_2=zeleners_initial_delta_2,
+    initial_delta_3=zeleners_initial_delta_3,
+    initial_delta_4=zeleners_initial_delta_4,
+    max_delta=12,
+    unified_deltas=True,
+    fatality_rate_p=0.33,  # CFR based on literature
+    fatality_rate_c=0.0005,  # CFR based on literature
+    conversion_rate_decennial=0.4,
+    **demographic_params
+)
