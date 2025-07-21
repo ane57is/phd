@@ -1,0 +1,56 @@
+,,,,,,,
+,,,,,,,
+,,,,,,,
+,,,,,,,
+,,,,,,,
+,,,,,,,
+,done?,Parameter (general),Parameter (specific),Description,"Expected value [Range: min, max]",Distribution,Reference(s)
+,✅,beta,beta_cchf,CCHF transmission rate in humans,"0.5 [0.26, 0.75] days⁻¹ ",normal,"Rahman et al., 2022, ""Ticks on the Run: A Mathematical Model of Crimean-Congo Haemorrhagic Fever (CCHF)—Key Factors for Transmission"". Epidemiologia 2022, 3(1), 116-134; https://doi.org/10.3390/epidemiologia3010010.
+
+Izadi, S., Salehi, M., Holakouie-Naieni, K. and Chinikar, S., 2008. ""The risk of transmission of Crimean-Congo hemorrhagic fever virus from human cases to first-degree relatives"". Japanese journal of infectious diseases, 61(6), pp.494-496.
+
+Mondal, M.K., Hanif, M. and Biswas, M.H.A., 2017. ""A mathematical analysis for controlling the spread of Nipah virus infection"". International Journal of Modelling and Simulation, 37(3), pp.185-197."
+,✅,sigma,sigma_cchf,Duration of CCHF incubation period in humans,"9 [5, 13] days",normal,"Rahman et al., 2022, ""Ticks on the Run: A Mathematical Model of Crimean-Congo Haemorrhagic Fever (CCHF)—Key Factors for Transmission"". Epidemiologia 2022, 3(1), 116-134; https://doi.org/10.3390/epidemiologia3010010.
+
+Shayan, S., Bokaean, M., Shahrivar, M.R. and Chinikar, S., 2015. ""Crimean-Congo hemorrhagic fever"". Laboratory medicine, 46(3), pp.180-189.
+
+Hoogstraal, H., 1979. The epidemiology of tick-borne Crimean-Congo hemorrhagic fever in Asia, Europe, and Africa. Journal of medical entomology, 15(4), pp.307-417.
+
+Crimean-Congo haemorrhagic fever: World Health Organization [website]. World Health Organization; 2025 (https://www.who.int/news-room/fact-sheets/detail/crimean-congo-haemorrhagic-fever, accessed 18 July 2025"
+,✅,gamma,gamma_cchf,Duration of CCHF infectious period in humans,"3 [2, 7] days",normal,"Ergönül, Ö., 2006. ""Crimean-Congo haemorrhagic fever"". The Lancet infectious diseases, 6(4), pp.203-214. [The haemorrhagic period is short (usually 2–3 days)]
+
+Swanepoel, R., Shepherd, A.J., Leman, P.A., Shepherd, S.P., McGillivray, G.M., Erasmus, M.J., Searle, L.A. and Gill, D.E., 1987. ""Epidemiologic and clinical features of Crimean-Congo hemorrhagic fever in southern Africa"". The American journal of tropical medicine and hygiene, 36(1), pp.120-132. [Virus was isolated for 7 consecutive days]"
+,✅,cfr,cfr_cchf,Case fatality rate of CCHF,"0.25 [0.1, 0.4]",triangle,"Swanepoel, R., Shepherd, A.J., Leman, P.A., Shepherd, S.P., McGillivray, G.M., Erasmus, M.J., Searle, L.A. and Gill, D.E., 1987. ""Epidemiologic and clinical features of Crimean-Congo hemorrhagic fever in southern Africa"". The American journal of tropical medicine and hygiene, 36(1), pp.120-132.Crimean-Congo haemorrhagic fever: World Health Organization [website].
+
+World Health Organization; 2025, accessed on 19-07-2025 from https://www.who.int/news-room/fact-sheets/detail/crimean-congo-haemorrhagic-fever"
+,✅,beta,beta_evd,EVD transmission rate in humans,"0.243 [0.209, 0.33] days⁻¹ ",normal,"Weitz, J.S. and Dushoff, J., 2015. ""Modeling post-death transmission of Ebola: challenges for inference and opportunities for control"". Scientific reports, 5(1), p.8751.
+
+Lekone, P.E. and Finkenstädt, B.F., 2006. ""Statistical inference in a stochastic epidemic SEIR model with control intervention: Ebola as a case study"". Biometrics, 62(4), pp.1170-1177."
+,✅,sigma,sigma_evd,Duration of EVD incubation period in humans,"12.7 [2, 21] days",normal,"Chowell, G. and Nishiura, H., 2014. ""Transmission dynamics and control of Ebola virus disease (EVD): a review"". BMC medicine, 12(1), p.196.
+
+Do, T.S. and Lee, Y.S., 2016. ""Modeling the spread of Ebola. Osong public health and research perspectives, 7(1), pp.43-48.
+
+Eichner, M., Dowell, S.F. and Firese, N., 2011. ""Incubation period of Ebola hemorrhagic virus subtype Zaire"". Osong public health and research perspectives, 2(1), pp.3-7."
+,✅,gamma,gamma_evd,Duration of EVD infectious period in humans,"10.1 [3.5, 10.7] days",normal,"Chowell, G. and Nishiura, H., 2014. ""Transmission dynamics and control of Ebola virus disease (EVD): a review"". BMC medicine, 12(1), p.196.
+
+Lekone, P.E. and Finkenstädt, B.F., 2006. ""Statistical inference in a stochastic epidemic SEIR model with control intervention: Ebola as a case study"". Biometrics, 62(4), pp.1170-1177."
+,✅,cfr,cfr_evd,Case fatality rate of EVD,"0.65 [0.41, 0.89]",triangle,"Chowell, G. and Nishiura, H., 2014. ""Transmission dynamics and control of Ebola virus disease (EVD): a review"". BMC medicine, 12(1), p.196."
+,✅,beta,beta_lassa,Lassa Fever transmission rate in humans,"0.001085 [0.00017, 0.002] days⁻¹ ",normal,"Madueme, P.G.U. and Chirove, F., 2023. ""Understanding the transmission pathways of Lassa fever: A mathematical modeling approach"". Infectious disease modelling, 8(1), pp.27-57.
+
+Usman, S. and Adamu, I.I., 2018. ""Modelling the transmission dynamics of the Lassa fever infection"". Mathematical Theory and Modeling, 8(5), pp.42-63."
+,✅,sigma,sigma_lassa,Duration of Lassa Fever incubation period in humans,"10.25 [2, 21] days",normal,"Doohan, P., Jorgensen, D., Naidoo, T.M., McCain, K., Hicks, J.T., McCabe, R., Bhatia, S., Charniga, K., Cuomo-Dannenburg, G., Hamlet, A. and Nash, R.K., 2024. ""Lassa fever outbreaks, mathematical models, and disease parameters: a systematic review and meta-analysis"". The Lancet Global Health, 12(12), pp.e1962-e1972.
+
+Lassa Fever, Africa CDC 2025, (accessed on 19-07-2025 from https://africacdc.org/disease/lassa-fever/)"
+,✅,gamma,gamma_lassa,Duration of Lassa Fever infectious period in humans,"14 [3.75, 14] days",normal,"Usman, S. and Adamu, I.I., 2018. ""Modelling the transmission dynamics of the Lassa fever infection"". Mathematical Theory and Modeling, 8(5), pp.42-63.
+
+Lassa fever. World Health Organization; 2024, accessed on 19-07-2025 from https://www.who.int/news-room/fact-sheets/detail/lassa-fever"
+,✅,cfr,cfr_lassa,Case fatality rate of Lassa Fever,"0.19 [0.0005, 0.33]",triangle,"Madueme, P.G.U. and Chirove, F., 2023. ""Understanding the transmission pathways of Lassa fever: A mathematical modeling approach"". Infectious disease modelling, 8(1), pp.27-57.
+
+""Weekly Report on Lassa fever outbreak in Nigeria for week 25"". An update of lassa fever outbreak in Nigeria. 2025, accessed on 19-07-2025 from https://www.ncdc.gov.ng/diseases/sitreps/
+
+Lassa Fever, Africa CDC 2025, (accessed on 19-07-2025 from https://africacdc.org/disease/lassa-fever/)"
+,,,,,,,
+,,,,,,,
+,,,,,,,
+,,,,,12,,
+,,,,,7,,
