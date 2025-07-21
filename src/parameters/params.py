@@ -180,7 +180,13 @@ measles_seir_params_with_lower_cfr_for_c_and_starks_conversion = BaseModelParame
     conversion_rate_decennial=0.4,
     **demographic_params
 )
-smallpox_seir_params_with_starks_conversion = BaseModelParameters(
+
+# Smallpox SEIR parameters with different configurations:
+# - with conversion and with hardcoded lower CFR
+# - without conversion and with hardcoded lower CFR
+# - with conversion and with CFR based on literature
+# - without conversion and with CFR based on literature
+smallpox_seir_params_with_starks_conversion_and_with_hardcoded_lower_cfr = BaseModelParameters(
     beta=0.584,
     sigma=1 / 12,
     gamma=1 / 9.5,
@@ -190,8 +196,22 @@ smallpox_seir_params_with_starks_conversion = BaseModelParameters(
     initial_delta_4=zeleners_initial_delta_4,
     max_delta=12,
     unified_deltas=True,
-    fatality_rate_p=0.9,
+    fatality_rate_p=0.95,
     conversion_rate_decennial=0.4,
+    **demographic_params
+)
+smallpox_seir_params_without_conversion_and_with_hardcoded_lower_cfr = BaseModelParameters(
+    beta=0.584,
+    sigma=1 / 12,
+    gamma=1 / 9.5,
+    initial_delta_1=zeleners_initial_delta_1,
+    initial_delta_2=zeleners_initial_delta_2,
+    initial_delta_3=zeleners_initial_delta_3,
+    initial_delta_4=zeleners_initial_delta_4,
+    max_delta=12,
+    unified_deltas=True,
+    fatality_rate_p=0.95,
+    conversion_rate_decennial=0,
     **demographic_params
 )
 smallpox_seir_params_with_starks_conversion_and_2_cfrs_from_literature = BaseModelParameters(
@@ -204,9 +224,58 @@ smallpox_seir_params_with_starks_conversion_and_2_cfrs_from_literature = BaseMod
     initial_delta_4=zeleners_initial_delta_4,
     max_delta=12,
     unified_deltas=True,
-    fatality_rate_p=0.9,
+    fatality_rate_p=0.95,
     fatality_rate_c=0.3,  # lower CFR based on literature
     conversion_rate_decennial=0.4,
+    **demographic_params
+)
+smallpox_seir_params_without_conversion_and_2_cfrs_from_literature = BaseModelParameters(
+    beta=0.584,
+    sigma=1 / 12,
+    gamma=1 / 9.5,
+    initial_delta_1=zeleners_initial_delta_1,
+    initial_delta_2=zeleners_initial_delta_2,
+    initial_delta_3=zeleners_initial_delta_3,
+    initial_delta_4=zeleners_initial_delta_4,
+    max_delta=12,
+    unified_deltas=True,
+    fatality_rate_p=0.95,
+    fatality_rate_c=0.3,  # lower CFR based on literature
+    conversion_rate_decennial=0,
+    **demographic_params
+)
+
+# Measles SEIR parameters with different configurations:
+# - with conversion and with hardcoded lower CFR
+# - without conversion and with hardcoded lower CFR
+# - with conversion and with CFR based on literature
+# - without conversion and with CFR based on literature
+measles_seir_params_with_starks_conversion_and_with_hardcoded_lower_cfr = BaseModelParameters(
+    beta=1.175,
+    sigma=1 / 10,
+    gamma=1 / 13.5,
+    initial_delta_1=zeleners_initial_delta_1,
+    initial_delta_2=zeleners_initial_delta_2,
+    initial_delta_3=zeleners_initial_delta_3,
+    initial_delta_4=zeleners_initial_delta_4,
+    max_delta=12,
+    unified_deltas=True,
+    fatality_rate_p=0.34,
+    conversion_rate_decennial=0.4,
+    **demographic_params
+)
+measles_seir_params_without_conversion_and_with_hardcoded_lower_cfr = BaseModelParameters(
+    beta=1.175,
+    sigma=1 / 10,
+    gamma=1 / 13.5,
+    initial_delta_1=zeleners_initial_delta_1,
+    initial_delta_2=zeleners_initial_delta_2,
+    initial_delta_3=zeleners_initial_delta_3,
+    initial_delta_4=zeleners_initial_delta_4,
+    max_delta=12,
+    unified_deltas=True,
+    fatality_rate_p=0.34,
+    conversion_rate_decennial=0,
     **demographic_params
 )
 measles_seir_params_with_starks_conversion_and_2_cfrs_from_literature = BaseModelParameters(
@@ -224,7 +293,55 @@ measles_seir_params_with_starks_conversion_and_2_cfrs_from_literature = BaseMode
     conversion_rate_decennial=0.4,
     **demographic_params
 )
+measles_seir_params_without_conversion_and_2_cfrs_from_literature = BaseModelParameters(
+    beta=1.175,
+    sigma=1 / 10,
+    gamma=1 / 13.5,
+    initial_delta_1=zeleners_initial_delta_1,
+    initial_delta_2=zeleners_initial_delta_2,
+    initial_delta_3=zeleners_initial_delta_3,
+    initial_delta_4=zeleners_initial_delta_4,
+    max_delta=12,
+    unified_deltas=True,
+    fatality_rate_p=0.34,
+    fatality_rate_c=0.03,  # lower CFR based on literature
+    conversion_rate_decennial=0,
+    **demographic_params
+)
 
+# Crimean–Congo hemorrhagic fever (CCHf) SEIR parameters with different configurations:
+# - with conversion and with hardcoded lower CFR
+# - without conversion and with hardcoded lower CFR
+# - with conversion and with CFR based on literature
+# - without conversion and with CFR based on literature
+cchf_seir_params_with_starks_conversion_and_with_hardcoded_lower_cfr = BaseModelParameters(
+    beta=0.5,
+    sigma=1 / 9,
+    gamma=1 / 3,
+    initial_delta_1=zeleners_initial_delta_1,
+    initial_delta_2=zeleners_initial_delta_2,
+    initial_delta_3=zeleners_initial_delta_3,
+    initial_delta_4=zeleners_initial_delta_4,
+    max_delta=12,
+    unified_deltas=True,
+    fatality_rate_p=0.4,  # CFR based on literature, lower CFR 3 times less than for Christians
+    conversion_rate_decennial=0.4,
+    **demographic_params
+)
+cchf_seir_params_without_conversion_and_with_hardcoded_lower_cfr = BaseModelParameters(
+    beta=0.5,
+    sigma=1 / 9,
+    gamma=1 / 3,
+    initial_delta_1=zeleners_initial_delta_1,
+    initial_delta_2=zeleners_initial_delta_2,
+    initial_delta_3=zeleners_initial_delta_3,
+    initial_delta_4=zeleners_initial_delta_4,
+    max_delta=12,
+    unified_deltas=True,
+    fatality_rate_p=0.4,  # CFR based on literature, lower CFR 3 times less than for Christians
+    conversion_rate_decennial=0,
+    **demographic_params
+)
 cchf_seir_params_with_starks_conversion_and_2_cfrs_from_literature = BaseModelParameters(
     beta=0.5,
     sigma=1 / 9,
@@ -240,7 +357,55 @@ cchf_seir_params_with_starks_conversion_and_2_cfrs_from_literature = BaseModelPa
     conversion_rate_decennial=0.4,
     **demographic_params
 )
+cchf_seir_params_without_conversion_and_2_cfrs_from_literature = BaseModelParameters(
+    beta=0.5,
+    sigma=1 / 9,
+    gamma=1 / 3,
+    initial_delta_1=zeleners_initial_delta_1,
+    initial_delta_2=zeleners_initial_delta_2,
+    initial_delta_3=zeleners_initial_delta_3,
+    initial_delta_4=zeleners_initial_delta_4,
+    max_delta=12,
+    unified_deltas=True,
+    fatality_rate_p=0.4,  # CFR based on literature
+    fatality_rate_c=0.1,  # CFR based on literature
+    conversion_rate_decennial=0,
+    **demographic_params
+)
 
+# Ebola virus disease (EVD) SEIR parameters with different configurations:
+# - with conversion and with hardcoded lower CFR
+# - without conversion and with hardcoded lower CFR
+# - with conversion and with CFR based on literature
+# - without conversion and with CFR based on literature
+evd_seir_params_with_starks_conversion_and_with_hardcoded_lower_cfr = BaseModelParameters(
+    beta=0.243,
+    sigma=1 / 12.7,
+    gamma=1 / 10.1,
+    initial_delta_1=zeleners_initial_delta_1,
+    initial_delta_2=zeleners_initial_delta_2,
+    initial_delta_3=zeleners_initial_delta_3,
+    initial_delta_4=zeleners_initial_delta_4,
+    max_delta=12,
+    unified_deltas=True,
+    fatality_rate_p=0.89,  # CFR based on literature, lower CFR 3 times less than for Christians
+    conversion_rate_decennial=0.4,
+    **demographic_params
+)
+evd_seir_params_without_conversion_and_with_hardcoded_lower_cfr = BaseModelParameters(
+    beta=0.243,
+    sigma=1 / 12.7,
+    gamma=1 / 10.1,
+    initial_delta_1=zeleners_initial_delta_1,
+    initial_delta_2=zeleners_initial_delta_2,
+    initial_delta_3=zeleners_initial_delta_3,
+    initial_delta_4=zeleners_initial_delta_4,
+    max_delta=12,
+    unified_deltas=True,
+    fatality_rate_p=0.89,  # CFR based on literature, lower CFR 3 times less than for Christians
+    conversion_rate_decennial=0,
+    **demographic_params
+)
 evd_seir_params_with_starks_conversion_and_2_cfrs_from_literature = BaseModelParameters(
     beta=0.243,
     sigma=1 / 12.7,
@@ -256,7 +421,55 @@ evd_seir_params_with_starks_conversion_and_2_cfrs_from_literature = BaseModelPar
     conversion_rate_decennial=0.4,
     **demographic_params
 )
+evd_seir_params_without_conversion_and_2_cfrs_from_literature = BaseModelParameters(
+    beta=0.243,
+    sigma=1 / 12.7,
+    gamma=1 / 10.1,
+    initial_delta_1=zeleners_initial_delta_1,
+    initial_delta_2=zeleners_initial_delta_2,
+    initial_delta_3=zeleners_initial_delta_3,
+    initial_delta_4=zeleners_initial_delta_4,
+    max_delta=12,
+    unified_deltas=True,
+    fatality_rate_p=0.89,  # CFR based on literature
+    fatality_rate_c=0.41,  # CFR based on literature
+    conversion_rate_decennial=0,
+    **demographic_params
+)
 
+# Lassa fever SEIR parameters with different configurations:
+# - with conversion and with hardcoded lower CFR
+# - without conversion and with hardcoded lower CFR
+# - with conversion and with CFR based on literature
+# - without conversion and with CFR based on literature
+lassa_seir_params_with_starks_conversion_and_with_hardcoded_lower_cfr = BaseModelParameters(
+    beta=0.001085,
+    sigma=1 / 10.25,
+    gamma=1 / 14,
+    initial_delta_1=zeleners_initial_delta_1,
+    initial_delta_2=zeleners_initial_delta_2,
+    initial_delta_3=zeleners_initial_delta_3,
+    initial_delta_4=zeleners_initial_delta_4,
+    max_delta=12,
+    unified_deltas=True,
+    fatality_rate_p=0.33,  # CFR based on literature, lower CFR 3 times less than for Christians
+    conversion_rate_decennial=0.4,
+    **demographic_params
+)
+lassa_seir_params_without_conversion_and_with_hardcoded_lower_cfr = BaseModelParameters(
+    beta=0.001085,
+    sigma=1 / 10.25,
+    gamma=1 / 14,
+    initial_delta_1=zeleners_initial_delta_1,
+    initial_delta_2=zeleners_initial_delta_2,
+    initial_delta_3=zeleners_initial_delta_3,
+    initial_delta_4=zeleners_initial_delta_4,
+    max_delta=12,
+    unified_deltas=True,
+    fatality_rate_p=0.33,  # CFR based on literature, lower CFR 3 times less than for Christians
+    conversion_rate_decennial=0,
+    **demographic_params
+)
 lassa_seir_params_with_starks_conversion_and_2_cfrs_from_literature = BaseModelParameters(
     beta=0.001085,
     sigma=1 / 10.25,
@@ -272,3 +485,54 @@ lassa_seir_params_with_starks_conversion_and_2_cfrs_from_literature = BaseModelP
     conversion_rate_decennial=0.4,
     **demographic_params
 )
+lassa_seir_params_without_conversion_and_2_cfrs_from_literature = BaseModelParameters(
+    beta=0.001085,
+    sigma=1 / 10.25,
+    gamma=1 / 14,
+    initial_delta_1=zeleners_initial_delta_1,
+    initial_delta_2=zeleners_initial_delta_2,
+    initial_delta_3=zeleners_initial_delta_3,
+    initial_delta_4=zeleners_initial_delta_4,
+    max_delta=12,
+    unified_deltas=True,
+    fatality_rate_p=0.33,  # CFR based on literature
+    fatality_rate_c=0.0005,  # CFR based on literature
+    conversion_rate_decennial=0,
+    **demographic_params
+)
+
+# Grouped parameters
+smallpox_param_sets = {
+    "with_conversion_hardcoded_cfr": smallpox_seir_params_with_starks_conversion_and_with_hardcoded_lower_cfr,
+    "without_conversion_hardcoded_cfr": smallpox_seir_params_without_conversion_and_with_hardcoded_lower_cfr,
+    "with_conversion_literature_cfr": smallpox_seir_params_with_starks_conversion_and_2_cfrs_from_literature,
+    "without_conversion_literature_cfr": smallpox_seir_params_without_conversion_and_2_cfrs_from_literature,
+}
+
+measles_param_sets = {
+    "with_conversion_hardcoded_cfr": measles_seir_params_with_starks_conversion_and_with_hardcoded_lower_cfr,
+    "without_conversion_hardcoded_cfr": measles_seir_params_without_conversion_and_with_hardcoded_lower_cfr,
+    "with_conversion_literature_cfr": measles_seir_params_with_starks_conversion_and_2_cfrs_from_literature,
+    "without_conversion_literature_cfr": measles_seir_params_without_conversion_and_2_cfrs_from_literature,
+}
+
+cchf_param_sets = {
+    "with_conversion_hardcoded_cfr": cchf_seir_params_with_starks_conversion_and_with_hardcoded_lower_cfr,
+    "without_conversion_hardcoded_cfr": cchf_seir_params_without_conversion_and_with_hardcoded_lower_cfr,
+    "with_conversion_literature_cfr": cchf_seir_params_with_starks_conversion_and_2_cfrs_from_literature,
+    "without_conversion_literature_cfr": cchf_seir_params_without_conversion_and_2_cfrs_from_literature,
+}
+
+evd_param_sets = {
+    "with_conversion_hardcoded_cfr": evd_seir_params_with_starks_conversion_and_with_hardcoded_lower_cfr,
+    "without_conversion_hardcoded_cfr": evd_seir_params_without_conversion_and_with_hardcoded_lower_cfr,
+    "with_conversion_literature_cfr": evd_seir_params_with_starks_conversion_and_2_cfrs_from_literature,
+    "without_conversion_literature_cfr": evd_seir_params_without_conversion_and_2_cfrs_from_literature,
+}
+
+lassa_param_sets = {
+    "with_conversion_hardcoded_cfr": lassa_seir_params_with_starks_conversion_and_with_hardcoded_lower_cfr,
+    "without_conversion_hardcoded_cfr": lassa_seir_params_without_conversion_and_with_hardcoded_lower_cfr,
+    "with_conversion_literature_cfr": lassa_seir_params_with_starks_conversion_and_2_cfrs_from_literature,
+    "without_conversion_literature_cfr": lassa_seir_params_without_conversion_and_2_cfrs_from_literature,
+}
