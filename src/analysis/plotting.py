@@ -3102,12 +3102,12 @@ def poc_solve_and_plot_ap_demo_cp_with_or_without_converstion_in_four_zones_and_
                 "Exposed Christians",
                 "Infected Christians",
                 "Recovered Christians",
-                "Deceased Christians",
-                "Susceptible Pagans",
-                "Exposed Pagans",
-                "Infected Pagans",
-                "Recovered Pagans",
-                "Deceased Pagans",
+                # "Deceased Christians",
+                # "Susceptible Pagans",
+                # "Exposed Pagans",
+                # "Infected Pagans",
+                # "Recovered Pagans",
+                # "Deceased Pagans",
             ]
 
             # Calculate the total compartments for each group
@@ -3286,28 +3286,28 @@ def poc_solve_and_plot_ap_demo_cp_with_or_without_converstion_in_four_zones_and_
         f"alive_c_percentage_of_total = {alive_c_percentage_of_total} %\n"
     )
 
-    # print("Length of t_cp:", len(t_cp))
-    # print("Length of solution_cp.t:", len(solution_cp.t))
-    # print("solution_cp.t[-1]:", solution_cp.t[-1])
-    #
-    # for i, label in enumerate(compartment_labels):
-    #     max_val = np.max(solution_cp.y[compartment_indices[i], :])
-    #     print(f"{label}: max = {max_val}")
-    #
-    # print("Solver success:", solution_cp.success)
-    # print("Solver message:", solution_cp.message)
+    print("Length of t_cp:", len(t_cp))
+    print("Length of solution_cp.t:", len(solution_cp.t))
+    print("solution_cp.t[-1]:", solution_cp.t[-1])
 
-    # print(
-    #     "final deltas:\n"
-    #     f"delta_1_c = {y0_cp[48]}\n"
-    #     f"delta_1_p = {y0_cp[49]}\n"
-    #     f"delta_2_c = {y0_cp[50]}\n"
-    #     f"delta_2_p = {y0_cp[51]}\n"
-    #     f"delta_3_c = {y0_cp[52]}\n"
-    #     f"delta_3_p = {y0_cp[53]}\n"
-    #     f"delta_4_c = {y0_cp[54]}\n"
-    #     f"delta_4_p = {y0_cp[55]}\n"
-    # )
+    for i, label in enumerate(compartment_labels):
+        max_val = np.max(solution_cp.y[compartment_indices[i], :])
+        print(f"{label}: max = {max_val}")
+
+    print("Solver success:", solution_cp.success)
+    print("Solver message:", solution_cp.message)
+
+    print(
+        "final deltas:\n"
+        f"delta_1_c = {y0_cp[48]}\n"
+        f"delta_1_p = {y0_cp[49]}\n"
+        f"delta_2_c = {y0_cp[50]}\n"
+        f"delta_2_p = {y0_cp[51]}\n"
+        f"delta_3_c = {y0_cp[52]}\n"
+        f"delta_3_p = {y0_cp[53]}\n"
+        f"delta_4_c = {y0_cp[54]}\n"
+        f"delta_4_p = {y0_cp[55]}\n"
+    )
     result = {
         "alive_total": alive_total,
         "alive_c": alive_c,
@@ -3346,7 +3346,7 @@ def table_2_runs(ap_params, output_path="table_2_results.csv"):
                     demo_params=demo_with,
                     cp_params=cp_with,
                     # conversion=True,
-                    # plot=False
+                    plot=True
                 )
             alive_total_with = result_with["alive_total"]
             alive_c_with = result_with["alive_c"]
@@ -3545,6 +3545,9 @@ if __name__ == "__main__":
     #     cp_params=cp_params
     # )
 
-    # table_2_runs(ap_params=measles_param_sets, output_path="table_2_results_measles.csv")
-    table_4_runs(output_path="table_4_results.csv")
+    # table_2_runs(ap_params=smallpox_param_sets, output_path="table_2_results_smallpox.csv")
+    # table_4_runs(output_path="table_4_results.csv")
+    table_2_runs(ap_params=smallpox_param_sets, output_path="table_like_2_results_smallpox_large_population.csv")
+    # table_2_runs(ap_params=measles_param_sets, output_path="table_like_3_results_measles_large_population.csv")
+    # table_4_runs(output_path="table_like_4_results_large_population.csv", )
 
