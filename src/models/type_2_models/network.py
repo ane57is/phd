@@ -8,7 +8,10 @@ from src.parameters.params import (
 import networkx as nx
 import random
 
+from copy import deepcopy
 import pandas as pd
+import matplotlib.patches as mpatches
+import matplotlib.pyplot as plt
 from tabulate import tabulate
 import os
 
@@ -27,7 +30,7 @@ def create_community_network(num_pagans, num_christians):
 
     # Create random social connections
     nodes = list(G.nodes())
-    for _ in range(int(len(nodes) * 2)):  # Create an average of 2 connections per node
+    for _ in range(int(len(nodes) * 5)):  # Create an average of 2 connections per node
         u, v = random.sample(nodes, 2)
         G.add_edge(u, v)
 
@@ -167,8 +170,9 @@ def run_epidemic_scenarios_n_times(diseases,total_population=10_000, percentage_
         tie_counts = {"C-C ties": [], "P-P ties": [], "C-P ties": []}
         percent_surviving = {"C-C ties": [], "P-P ties": [], "C-P ties": []}
 
-        for _ in range(n):
+        for i in range(n):
             initial_network = create_community_network(num_pagans, num_christians)
+            G_initial = deepcopy(initial_network)
             initial_ties = analyze_network_ties(initial_network)
 
             network = initial_network.copy()
@@ -179,6 +183,7 @@ def run_epidemic_scenarios_n_times(diseases,total_population=10_000, percentage_
                 initial_infected=int(0.01 * total_population),  # 1% of total population infected
                 reproduction_number=params["reproduction_number"]
             )
+            G_final = deepcopy(surviving_network)
             surviving_ties = analyze_network_ties(surviving_network)
             for tie_type in initial_ties:
                 tie_counts[tie_type].append(surviving_ties[tie_type])
@@ -186,6 +191,17 @@ def run_epidemic_scenarios_n_times(diseases,total_population=10_000, percentage_
                 percent = (surviving_ties[tie_type] / initial * 100) if initial > 0 else 0
                 percent_surviving[tie_type].append(percent)
 
+            if i == 0:
+                print(list(network.nodes(data=True))[:5])
+
+                plot_pre_post_clean(
+                    G_initial,
+                    G_final,
+                    disease=disease,
+                    total_population=total_population,
+                    percentage_christians=percentage_christians,
+                    save_path="figure_2_network_pre_post.png"
+                )
 
         labels = {
             "C-C ties": "Christian-Christian ties",
@@ -202,53 +218,118 @@ def run_epidemic_scenarios_n_times(diseases,total_population=10_000, percentage_
             max_percent = max(percent_surviving[tie_type])
             row[f"{labels[tie_type]} count [min, max]"] = f"[{min_count}, {max_count}]"
             row[f"{labels[tie_type]} percent [min, max]"] = f"{avg_percent:.2f} [{min_percent:.2f}, {max_percent:.2f}]"
+        # Add the check column
+        cc_avg = sum(percent_surviving["C-C ties"]) / n
+        cp_avg = sum(percent_surviving["C-P ties"]) / n
+        pp_avg = sum(percent_surviving["P-P ties"]) / n
+        row["CC>PP avg"] = "✅" if cc_avg > pp_avg else "❌"
+        row["CP>PP avg"] = "✅" if cp_avg > pp_avg else "❌"
+
         results.append(row)
 
     df = pd.DataFrame(results)
+
     print("\n" + tabulate(df, headers="keys", tablefmt="github", showindex=False) + "\n")
     if to_csv:
         df.to_csv(output_path, index=False)
         print(f"[Saved] CSV output written to: {os.path.abspath(output_path)}")
 
+
+def plot_pre_post_clean(G_before, G_after, disease, total_population, percentage_christians, save_path=None):
+    """
+    Plot side-by-side networks (pre/post pandemic) with a clean, white style.
+    Nodes use:
+      - 'religion': 'Christian' or 'Pagan'
+      - 'status': 'alive' or 'dead'
+    """
+    def get_color(attrs):
+        group = attrs.get('group', '').lower()
+        status = attrs.get('status', '').lower()
+
+        if status == 'dead':
+            return '#888888'  # gray
+        elif group == 'christian':
+            return '#d62728'  # red
+        elif group == 'pagan':
+            return '#2ca02c'  # green
+        return '#1f77b4'  # fallback
+
+    def draw_graph(ax, G, pos, title):
+        node_colors = [get_color(G.nodes[n]) for n in G]
+        nx.draw_networkx_nodes(G, pos, ax=ax, node_color=node_colors, edgecolors='black',
+                               linewidths=0.3, node_size=15, alpha=0.9)
+        # nx.draw_networkx_edges(G, pos, ax=ax, edge_color='lightgray', width=0.4, alpha=0.6)
+        nx.draw_networkx_edges(G, pos, ax=ax, edge_color='gray', width=1.2, alpha=0.8)
+        ax.set_title(title, fontsize=12)
+        ax.set_axis_off()
+
+    # Shared layout to highlight structure change
+    # pos = nx.spring_layout(G_before, seed=42)
+    pos = nx.spring_layout(G_before, seed=42, scale=1.9, k=0.08)
+
+    fig, axes = plt.subplots(1, 2, figsize=(14, 7))
+    draw_graph(axes[0], G_before, pos, "Before pandemic")
+    draw_graph(axes[1], G_after, pos, "After pandemic")
+
+    # Legend
+    legend = [
+        mpatches.Patch(color='#d62728', label='Christian (alive)'),
+        mpatches.Patch(color='#2ca02c', label='Pagan (alive)'),
+        mpatches.Patch(color='#888888', label='Dead (any group)')
+    ]
+    fig.legend(handles=legend, loc='lower center', ncol=3, frameon=False)
+    fig.suptitle(
+        f"Pandemic of {disease} with CFRs from literature applied on initial population of {total_population:,}".replace(',', ' ') +
+        f" individuals ({percentage_christians*100}% of the population being Christians)",
+        fontsize=14
+    )
+    fig.subplots_adjust(top=0.90)
+    plt.tight_layout(rect=[0, 0.04, 1, 0.95])
+
+    if save_path:
+        plt.savefig(save_path, dpi=300)
+    plt.show()
+
+
 if __name__ == "__main__":
     def create_tables_5678(total_population=10_000, n=100, print_csv=False):
         diseases_literature_cfr = {
-            "Stark's example": {
-                "christian_mortality": 0.1,
-                "pagan_mortality": 0.3,
-                "initial_infected": 100,
-                "reproduction_number": None
-            },
+            # "Stark's example": {
+            #     "christian_mortality": 0.1,
+            #     "pagan_mortality": 0.3,
+            #     "initial_infected": 100,
+            #     "reproduction_number": None
+            # },
             "Smallpox": {
                 "christian_mortality": smallpox_param_sets["without_conversion_literature_cfr"].fatality_rate_c,
                 "pagan_mortality": smallpox_param_sets["without_conversion_literature_cfr"].fatality_rate_p,
                 "initial_infected": 100,
                 "reproduction_number": smallpox_param_sets["without_conversion_literature_cfr"].beta / smallpox_param_sets["without_conversion_literature_cfr"].gamma
             },
-            "Measles": {
-                "christian_mortality": measles_param_sets["without_conversion_literature_cfr"].fatality_rate_c,
-                "pagan_mortality": measles_param_sets["without_conversion_literature_cfr"].fatality_rate_p,
-                "initial_infected": 100,
-                "reproduction_number": measles_param_sets["without_conversion_literature_cfr"].beta / measles_param_sets["without_conversion_literature_cfr"].gamma
-            },
-            "CCHF": {
-                "christian_mortality": cchf_param_sets["without_conversion_literature_cfr"].fatality_rate_c,
-                "pagan_mortality": cchf_param_sets["without_conversion_literature_cfr"].fatality_rate_p,
-                "initial_infected": 100,
-                "reproduction_number": cchf_param_sets["without_conversion_literature_cfr"].beta / cchf_param_sets["without_conversion_literature_cfr"].gamma
-            },
-            "EVD": {
-                "christian_mortality": evd_param_sets["without_conversion_literature_cfr"].fatality_rate_c,
-                "pagan_mortality": evd_param_sets["without_conversion_literature_cfr"].fatality_rate_p,
-                "initial_infected": 100,
-                "reproduction_number": evd_param_sets["without_conversion_literature_cfr"].beta / evd_param_sets["without_conversion_literature_cfr"].gamma
-            },
-            "Lassa": {
-                "christian_mortality": lassa_param_sets["without_conversion_literature_cfr"].fatality_rate_c,
-                "pagan_mortality": lassa_param_sets["without_conversion_literature_cfr"].fatality_rate_p,
-                "initial_infected": 100,
-                "reproduction_number": lassa_param_sets["without_conversion_literature_cfr"].beta / lassa_param_sets["without_conversion_literature_cfr"].gamma
-            }
+            # "Measles": {
+            #     "christian_mortality": measles_param_sets["without_conversion_literature_cfr"].fatality_rate_c,
+            #     "pagan_mortality": measles_param_sets["without_conversion_literature_cfr"].fatality_rate_p,
+            #     "initial_infected": 100,
+            #     "reproduction_number": measles_param_sets["without_conversion_literature_cfr"].beta / measles_param_sets["without_conversion_literature_cfr"].gamma
+            # },
+            # "CCHF": {
+            #     "christian_mortality": cchf_param_sets["without_conversion_literature_cfr"].fatality_rate_c,
+            #     "pagan_mortality": cchf_param_sets["without_conversion_literature_cfr"].fatality_rate_p,
+            #     "initial_infected": 100,
+            #     "reproduction_number": cchf_param_sets["without_conversion_literature_cfr"].beta / cchf_param_sets["without_conversion_literature_cfr"].gamma
+            # },
+            # "EVD": {
+            #     "christian_mortality": evd_param_sets["without_conversion_literature_cfr"].fatality_rate_c,
+            #     "pagan_mortality": evd_param_sets["without_conversion_literature_cfr"].fatality_rate_p,
+            #     "initial_infected": 100,
+            #     "reproduction_number": evd_param_sets["without_conversion_literature_cfr"].beta / evd_param_sets["without_conversion_literature_cfr"].gamma
+            # },
+            # "Lassa": {
+            #     "christian_mortality": lassa_param_sets["without_conversion_literature_cfr"].fatality_rate_c,
+            #     "pagan_mortality": lassa_param_sets["without_conversion_literature_cfr"].fatality_rate_p,
+            #     "initial_infected": 100,
+            #     "reproduction_number": lassa_param_sets["without_conversion_literature_cfr"].beta / lassa_param_sets["without_conversion_literature_cfr"].gamma
+            # }
         }
         diseases_hardcoded_cfr = {
             "Stark": {
@@ -294,53 +375,53 @@ if __name__ == "__main__":
             }
         }
 
-        print("\n\nTie survival rates with fatality rate based in literature and 0.4% of population being Christian")
+        print("\n\nTable 5 Tie survival rates with fatality rate based on literature and 0.4% of population being Christian (2a)")
         run_epidemic_scenarios_n_times(
             diseases_literature_cfr,
             # diseases_hardcoded_cfr,
             total_population=total_population,
-            percentage_christians=0.004,
-            # percentage_christians=0.2,
+            # percentage_christians=0.004,
+            percentage_christians=0.2,
             n=n,
             to_csv=print_csv,
             output_path="table_5_2a_0004.csv"
         )
 
-        print("\n\nTie survival rates with fatality rate based in literature and 20% of population being Christian")
-        run_epidemic_scenarios_n_times(
-            diseases_literature_cfr,
-            # diseases_hardcoded_cfr,
-            total_population=total_population,
-            # percentage_christians=0.004,
-            percentage_christians=0.2,
-            n=n,
-            to_csv=print_csv,
-            output_path="table_6_2a_02.csv"
-        )
-
-        print("\n\nTie survival rates with hardcoded lower fatality rate and 0.4% of population being Christian")
-        run_epidemic_scenarios_n_times(
-            # diseases_literature_cfr,
-            diseases_hardcoded_cfr,
-            total_population=total_population,
-            percentage_christians=0.004,
-            # percentage_christians=0.2,
-            n=n,
-            to_csv=print_csv,
-            output_path="table_7_2b_0004.csv"
-        )
-
-        print("\n\nTie survival rates with hardcoded lower fatality rate and 20% of population being Christian")
-        run_epidemic_scenarios_n_times(
-            # diseases_literature_cfr,
-            diseases_hardcoded_cfr,
-            total_population=total_population,
-            # percentage_christians=0.004,
-            percentage_christians=0.2,
-            n=n,
-            to_csv=print_csv,
-            output_path="table_8_2b_02.csv"
-        )
+        # print("\n\nTable 6 Tie survival rates with fatality rate based on literature and 20% of population being Christian (2a)")
+        # run_epidemic_scenarios_n_times(
+        #     diseases_literature_cfr,
+        #     # diseases_hardcoded_cfr,
+        #     total_population=total_population,
+        #     # percentage_christians=0.004,
+        #     percentage_christians=0.2,
+        #     n=n,
+        #     to_csv=print_csv,
+        #     output_path="table_6_2a_02.csv"
+        # )
+        #
+        # print("\n\nTable 7 Tie survival rates with hardcoded lower fatality rate and 0.4% of population being Christian (2b).")
+        # run_epidemic_scenarios_n_times(
+        #     # diseases_literature_cfr,
+        #     diseases_hardcoded_cfr,
+        #     total_population=total_population,
+        #     percentage_christians=0.004,
+        #     # percentage_christians=0.2,
+        #     n=n,
+        #     to_csv=print_csv,
+        #     output_path="table_7_2b_0004.csv"
+        # )
+        #
+        # print("\n\nTable 8 Tie survival rates with hardcoded lower fatality rate and 20% of population being Christian (2b).")
+        # run_epidemic_scenarios_n_times(
+        #     # diseases_literature_cfr,
+        #     diseases_hardcoded_cfr,
+        #     total_population=total_population,
+        #     # percentage_christians=0.004,
+        #     percentage_christians=0.2,
+        #     n=n,
+        #     to_csv=print_csv,
+        #     output_path="table_8_2b_02.csv"
+        # )
 
 
     create_tables_5678(total_population=10_000, n=100, print_csv=True)
