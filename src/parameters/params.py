@@ -91,7 +91,13 @@ class BaseModelParameters:
         fatality_rate_c=None,
         conversion_rate_decennial=None,
         max_delta=None,
+        disease_name_full=None,
+        disease_name_short=None
     ):
+        # Disease identifiers
+        self.disease_name_full = disease_name_full if disease_name_full else "Unknown Disease"
+        self.disease_name_short = disease_name_short if disease_name_short else "Unknown"
+
         # Disease-specific parameters
         self.beta = beta
         self.sigma = sigma
@@ -199,6 +205,7 @@ smallpox_seir_params_with_starks_conversion_and_with_hardcoded_lower_cfr = BaseM
     unified_deltas=True,
     fatality_rate_p=0.95,
     conversion_rate_decennial=0.4,
+    disease_name_full="Smallpox",
     **demographic_params
 )
 smallpox_seir_params_without_conversion_and_with_hardcoded_lower_cfr = BaseModelParameters(
@@ -213,6 +220,7 @@ smallpox_seir_params_without_conversion_and_with_hardcoded_lower_cfr = BaseModel
     unified_deltas=True,
     fatality_rate_p=0.95,
     conversion_rate_decennial=0,
+    disease_name_full="Smallpox",
     **demographic_params
 )
 smallpox_seir_params_with_starks_conversion_and_2_cfrs_from_literature = BaseModelParameters(
@@ -228,6 +236,7 @@ smallpox_seir_params_with_starks_conversion_and_2_cfrs_from_literature = BaseMod
     fatality_rate_p=0.95,
     fatality_rate_c=0.3,  # lower CFR based on literature
     conversion_rate_decennial=0.4,
+    disease_name_full="Smallpox",
     **demographic_params
 )
 smallpox_seir_params_without_conversion_and_2_cfrs_from_literature = BaseModelParameters(
@@ -243,6 +252,7 @@ smallpox_seir_params_without_conversion_and_2_cfrs_from_literature = BaseModelPa
     fatality_rate_p=0.95,
     fatality_rate_c=0.3,  # lower CFR based on literature
     conversion_rate_decennial=0,
+    disease_name_full="Smallpox",
     **demographic_params
 )
 
@@ -263,6 +273,7 @@ measles_seir_params_with_starks_conversion_and_with_hardcoded_lower_cfr = BaseMo
     unified_deltas=True,
     fatality_rate_p=0.34,
     conversion_rate_decennial=0.4,
+    disease_name_full="Measles",
     **demographic_params
 )
 measles_seir_params_without_conversion_and_with_hardcoded_lower_cfr = BaseModelParameters(
@@ -277,6 +288,7 @@ measles_seir_params_without_conversion_and_with_hardcoded_lower_cfr = BaseModelP
     unified_deltas=True,
     fatality_rate_p=0.34,
     conversion_rate_decennial=0,
+    disease_name_full="Measles",
     **demographic_params
 )
 measles_seir_params_with_starks_conversion_and_2_cfrs_from_literature = BaseModelParameters(
@@ -292,6 +304,7 @@ measles_seir_params_with_starks_conversion_and_2_cfrs_from_literature = BaseMode
     fatality_rate_p=0.34,
     fatality_rate_c=0.03,  # lower CFR based on literature
     conversion_rate_decennial=0.4,
+    disease_name_full="Measles",
     **demographic_params
 )
 measles_seir_params_without_conversion_and_2_cfrs_from_literature = BaseModelParameters(
@@ -307,6 +320,7 @@ measles_seir_params_without_conversion_and_2_cfrs_from_literature = BaseModelPar
     fatality_rate_p=0.34,
     fatality_rate_c=0.03,  # lower CFR based on literature
     conversion_rate_decennial=0,
+    disease_name_full="Measles",
     **demographic_params
 )
 
@@ -327,6 +341,8 @@ cchf_seir_params_with_starks_conversion_and_with_hardcoded_lower_cfr = BaseModel
     unified_deltas=True,
     fatality_rate_p=0.4,  # CFR based on literature, lower CFR 3 times less than for Christians
     conversion_rate_decennial=0.4,
+    disease_name_full="Crimean–Congo hemorrhagic fever",
+    disease_name_short="CCHF",
     **demographic_params
 )
 cchf_seir_params_without_conversion_and_with_hardcoded_lower_cfr = BaseModelParameters(
@@ -341,6 +357,8 @@ cchf_seir_params_without_conversion_and_with_hardcoded_lower_cfr = BaseModelPara
     unified_deltas=True,
     fatality_rate_p=0.4,  # CFR based on literature, lower CFR 3 times less than for Christians
     conversion_rate_decennial=0,
+    disease_name_full="Crimean–Congo hemorrhagic fever",
+    disease_name_short="CCHF",
     **demographic_params
 )
 cchf_seir_params_with_starks_conversion_and_2_cfrs_from_literature = BaseModelParameters(
@@ -356,6 +374,8 @@ cchf_seir_params_with_starks_conversion_and_2_cfrs_from_literature = BaseModelPa
     fatality_rate_p=0.4,  # CFR based on literature
     fatality_rate_c=0.1,  # CFR based on literature
     conversion_rate_decennial=0.4,
+    disease_name_full="Crimean–Congo hemorrhagic fever",
+    disease_name_short="CCHF",
     **demographic_params
 )
 cchf_seir_params_without_conversion_and_2_cfrs_from_literature = BaseModelParameters(
@@ -371,6 +391,8 @@ cchf_seir_params_without_conversion_and_2_cfrs_from_literature = BaseModelParame
     fatality_rate_p=0.4,  # CFR based on literature
     fatality_rate_c=0.1,  # CFR based on literature
     conversion_rate_decennial=0,
+    disease_name_full="Crimean–Congo hemorrhagic fever",
+    disease_name_short="CCHF",
     **demographic_params
 )
 
@@ -391,6 +413,8 @@ evd_seir_params_with_starks_conversion_and_with_hardcoded_lower_cfr = BaseModelP
     unified_deltas=True,
     fatality_rate_p=0.89,  # CFR based on literature, lower CFR 3 times less than for Christians
     conversion_rate_decennial=0.4,
+    disease_name_full="Ebola virus disease",
+    disease_name_short="EVD",
     **demographic_params
 )
 evd_seir_params_without_conversion_and_with_hardcoded_lower_cfr = BaseModelParameters(
@@ -405,6 +429,8 @@ evd_seir_params_without_conversion_and_with_hardcoded_lower_cfr = BaseModelParam
     unified_deltas=True,
     fatality_rate_p=0.89,  # CFR based on literature, lower CFR 3 times less than for Christians
     conversion_rate_decennial=0,
+    disease_name_full="Ebola virus disease",
+    disease_name_short="EVD",
     **demographic_params
 )
 evd_seir_params_with_starks_conversion_and_2_cfrs_from_literature = BaseModelParameters(
@@ -420,6 +446,8 @@ evd_seir_params_with_starks_conversion_and_2_cfrs_from_literature = BaseModelPar
     fatality_rate_p=0.89,  # CFR based on literature
     fatality_rate_c=0.41,  # CFR based on literature
     conversion_rate_decennial=0.4,
+    disease_name_full="Ebola virus disease",
+    disease_name_short="EVD",
     **demographic_params
 )
 evd_seir_params_without_conversion_and_2_cfrs_from_literature = BaseModelParameters(
@@ -435,6 +463,8 @@ evd_seir_params_without_conversion_and_2_cfrs_from_literature = BaseModelParamet
     fatality_rate_p=0.89,  # CFR based on literature
     fatality_rate_c=0.41,  # CFR based on literature
     conversion_rate_decennial=0,
+    disease_name_full="Ebola virus disease",
+    disease_name_short="EVD",
     **demographic_params
 )
 
@@ -455,6 +485,8 @@ lassa_seir_params_with_starks_conversion_and_with_hardcoded_lower_cfr = BaseMode
     unified_deltas=True,
     fatality_rate_p=0.33,  # CFR based on literature, lower CFR 3 times less than for Christians
     conversion_rate_decennial=0.4,
+    disease_name_full="Lassa fever",
+    disease_name_short="Lassa",
     **demographic_params
 )
 lassa_seir_params_without_conversion_and_with_hardcoded_lower_cfr = BaseModelParameters(
@@ -469,6 +501,8 @@ lassa_seir_params_without_conversion_and_with_hardcoded_lower_cfr = BaseModelPar
     unified_deltas=True,
     fatality_rate_p=0.33,  # CFR based on literature, lower CFR 3 times less than for Christians
     conversion_rate_decennial=0,
+    disease_name_full="Lassa fever",
+    disease_name_short="Lassa",
     **demographic_params
 )
 lassa_seir_params_with_starks_conversion_and_2_cfrs_from_literature = BaseModelParameters(
@@ -484,6 +518,8 @@ lassa_seir_params_with_starks_conversion_and_2_cfrs_from_literature = BaseModelP
     fatality_rate_p=0.33,  # CFR based on literature
     fatality_rate_c=0.0005,  # CFR based on literature
     conversion_rate_decennial=0.4,
+    disease_name_full="Lassa fever",
+    disease_name_short="Lassa",
     **demographic_params
 )
 lassa_seir_params_without_conversion_and_2_cfrs_from_literature = BaseModelParameters(
@@ -499,6 +535,8 @@ lassa_seir_params_without_conversion_and_2_cfrs_from_literature = BaseModelParam
     fatality_rate_p=0.33,  # CFR based on literature
     fatality_rate_c=0.0005,  # CFR based on literature
     conversion_rate_decennial=0,
+    disease_name_full="Lassa fever",
+    disease_name_short="Lassa",
     **demographic_params
 )
 

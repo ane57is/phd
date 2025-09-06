@@ -2,9 +2,11 @@ from copy import deepcopy
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.ticker import MultipleLocator, FuncFormatter, MaxNLocator
 import os
 from scipy.integrate import solve_ivp
 from tabulate import tabulate
+import time
 from src.models.type_11_models.seir import (
     direct_transmission_over_two_connected_subpopulations_seird_model,
     direct_transmission_over_one_population_as_in_plos_paper,
@@ -2791,6 +2793,7 @@ def poc_solve_and_plot_ap_demo_cp_with_converstion_to_denser_of_four_zones_and_s
     )
 
 
+# the main plotting function
 def poc_solve_and_plot_ap_demo_cp_with_or_without_converstion_in_four_zones_and_smaller_cfr_for_christians(
     start_year_ap=165,
     end_year_ap=189,
@@ -2799,7 +2802,9 @@ def poc_solve_and_plot_ap_demo_cp_with_or_without_converstion_in_four_zones_and_
     ap_params=smallpox_param_sets["with_conversion_literature_cfr"],
     demo_params=smallpox_param_sets["with_conversion_literature_cfr"],
     cp_params=measles_seir_params_with_lower_cfr_for_c_and_starks_conversion,
-    plot=False
+    plot=False,
+    plot_alive_christians=False,
+    conversion=None
 ):
     # The Antonine Plague part:
     y0_ap = [
@@ -3145,6 +3150,17 @@ def poc_solve_and_plot_ap_demo_cp_with_or_without_converstion_in_four_zones_and_
         # Call the function to plot totals
         plot_total_compartments()
 
+    if plot_alive_christians:
+        ap_disease = ap_params.disease_name_full
+        cp_disease = cp_params.disease_name_full
+        plot_alive_christians_full_timeline_clean(
+        # plot_alive_christians_full_timeline(
+            solutions=[solution_ap, solution_demographic, solution_cp],
+            time_segments=[t_ap, t_demographic, t_cp],
+            scenario_labels=["Antonine Plague", "Post-plague growth", "Cyprianic Plague"],
+            plot_title=f"Alive Christian Population (AP: {ap_disease}, CP: {cp_disease},\nconversion: {'Enabled' if conversion else 'Disabled'}, CFR: Stark, Starting total population: 150M)"
+        )
+
     # Print the final values of each compartment for debugging purposes
     compartments_after_conversion = solution_cp.y[:, -1]
 
@@ -3316,120 +3332,25 @@ def poc_solve_and_plot_ap_demo_cp_with_or_without_converstion_in_four_zones_and_
     }
     return result
 
-def table_2_runs(ap_params, output_path="table_2_results.csv"):
+
+def table_2_runs(output_path="table_2_results", with_timestamp=False):
     """
     Run simulations for:
     Table 2 Summary of model output for Antonine Plague as smallpox and a different disease for Cyprianic Plague.
 
 
-    """
-    # Disease names and parameter sets
-    diseases = {
-        "Smallpox": smallpox_param_sets,
-        "Measles": measles_param_sets,
-        "Crimean–Congo hemorrhagic fever": cchf_param_sets,
-        "Ebola virus disease": evd_param_sets,
-        "Lassa fever": lassa_param_sets
-    }
+    # """
+    if with_timestamp:
+        timestamp = time.time()
+        output_path = f"{output_path}_{timestamp}.csv"
+    else:
+        output_path = f"{output_path}.csv"
 
-    results = []
-
-    for disease_name, cp_param_set in diseases.items():
-        # WITH conversion
-        try:
-            cp_with = deepcopy(cp_param_set["with_conversion_literature_cfr"])
-            demo_with = deepcopy(ap_params["with_conversion_literature_cfr"])
-            ap_with = deepcopy(ap_params["with_conversion_literature_cfr"])
-
-            result_with = poc_solve_and_plot_ap_demo_cp_with_or_without_converstion_in_four_zones_and_smaller_cfr_for_christians(
-                    ap_params=ap_with,
-                    demo_params=demo_with,
-                    cp_params=cp_with,
-                    # conversion=True,
-                    plot=True
-                )
-            alive_total_with = result_with["alive_total"]
-            alive_c_with = result_with["alive_c"]
-            alive_p_with = result_with["alive_p"]
-            percent_with = result_with["alive_c_percentage_of_total"]
-        except Exception:
-            alive_c_with = percent_with = None
-
-        # WITHOUT conversion
-        try:
-            cp_without = deepcopy(cp_param_set["without_conversion_literature_cfr"])
-            demo_without = deepcopy(ap_params["without_conversion_literature_cfr"])
-            ap_without = deepcopy(ap_params["without_conversion_literature_cfr"])
-
-            result_without = poc_solve_and_plot_ap_demo_cp_with_or_without_converstion_in_four_zones_and_smaller_cfr_for_christians(
-                ap_params=ap_without,
-                demo_params=demo_without,
-                cp_params=cp_without,
-                # conversion=False,
-                # plot=False
-            )
-
-            alive_total_without = result_without["alive_total"]
-            alive_c_without = result_without["alive_c"]
-            alive_p_without = result_without["alive_p"]
-            percent_without = result_without["alive_c_percentage_of_total"]
-
-        except Exception:
-            alive_c_without = percent_without = None
-
-        # Compute differences
-        try:
-            ratio_increase = percent_with - percent_without
-        except:
-            ratio_increase = 0.00
-
-        try:
-            if alive_c_with and alive_c_without:
-                pop_increase = (1 - (alive_c_without / alive_c_with)) * 100
-            else:
-                pop_increase = "#DIV/0!"
-        except:
-            pop_increase = "#DIV/0!"
-
-        results.append([
-            disease_name,
-            int(alive_c_with) if alive_c_with is not None else "",
-            f"{percent_with:}" if percent_with is not None else "",
-            int(alive_c_without) if alive_c_without is not None else "",
-            f"{percent_without}" if percent_without is not None else "",
-            f"{ratio_increase}",
-            f"{pop_increase}"
-        ])
-
-    columns = [
-        "Cyprianic Plague model",
-        "Size of Christian subpopulation (individuals)",
-        "Total Christians (compared to total population; percent)",
-        "Size of Chistian subpopulation without conversion (individuals)",
-        "Total Christians without conversion (compared to total population; percent)",
-        "Christian subpopulation ratio increase (compared to modeled baseline without conversion; percent points)",
-        "Christian subpopulation increase (compared to modeled baseline without conversion; percent)"
-    ]
-
-    df = pd.DataFrame(results, columns=columns)
-
-    print("\n" + tabulate(df, headers="keys", tablefmt="github", showindex=False) + "\n")
-    df.to_csv(output_path, index=False)
-    print(f"[Saved] CSV output written to: {os.path.abspath(output_path)}")
-
-    return df
-
-def table_4_runs(output_path="table_4_results.csv"):
-    """
-    Run simulations for:
-    Table 4 Summary of model output for Antonine Plague as smallpox or measles and a different disease for Cyprianic Plague.
-
-
-    """
     ap_params = {
         "Smallpox": smallpox_param_sets,
         "Measles": measles_param_sets
     }
+
     # Disease names and parameter sets
     diseases = {
         "Smallpox": smallpox_param_sets,
@@ -3445,16 +3366,17 @@ def table_4_runs(output_path="table_4_results.csv"):
         for disease_name, cp_param_set in diseases.items():
             # WITH conversion
             try:
-                cp_with = deepcopy(cp_param_set["with_conversion_hardcoded_cfr"])
-                demo_with = deepcopy(ap_param_set["with_conversion_hardcoded_cfr"])
-                ap_with = deepcopy(ap_param_set["with_conversion_hardcoded_cfr"])
+                cp_with = deepcopy(cp_param_set["with_conversion_literature_cfr"])
+                demo_with = deepcopy(ap_param_set["with_conversion_literature_cfr"])
+                ap_with = deepcopy(ap_param_set["with_conversion_literature_cfr"])
 
                 result_with = poc_solve_and_plot_ap_demo_cp_with_or_without_converstion_in_four_zones_and_smaller_cfr_for_christians(
                         ap_params=ap_with,
                         demo_params=demo_with,
                         cp_params=cp_with,
-                        # conversion=True,
-                        # plot=False
+                        conversion=True,
+                        # plot=True,
+                        plot_alive_christians=True
                     )
                 alive_total_with = result_with["alive_total"]
                 alive_c_with = result_with["alive_c"]
@@ -3465,16 +3387,17 @@ def table_4_runs(output_path="table_4_results.csv"):
 
             # WITHOUT conversion
             try:
-                cp_without = deepcopy(cp_param_set["without_conversion_hardcoded_cfr"])
-                demo_without = deepcopy(ap_param_set["without_conversion_hardcoded_cfr"])
-                ap_without = deepcopy(ap_param_set["without_conversion_hardcoded_cfr"])
+                cp_without = deepcopy(cp_param_set["without_conversion_literature_cfr"])
+                demo_without = deepcopy(ap_param_set["without_conversion_literature_cfr"])
+                ap_without = deepcopy(ap_param_set["without_conversion_literature_cfr"])
 
                 result_without = poc_solve_and_plot_ap_demo_cp_with_or_without_converstion_in_four_zones_and_smaller_cfr_for_christians(
                     ap_params=ap_without,
                     demo_params=demo_without,
                     cp_params=cp_without,
-                    # conversion=False,
-                    # plot=False
+                    conversion=False,
+                    # plot=False,
+                    plot_alive_christians=True
                 )
 
                 alive_total_without = result_without["alive_total"]
@@ -3530,6 +3453,270 @@ def table_4_runs(output_path="table_4_results.csv"):
     return df
 
 
+def table_4_runs(output_path="table_4_results", with_timestamp=False):
+    """
+    Run simulations for:
+    Table 4 Summary of model output for Antonine Plague as smallpox or measles and a different disease for Cyprianic Plague.
+
+
+    """
+    if with_timestamp:
+        timestamp = time.time()
+        output_path = f"{output_path}_{timestamp}.csv"
+    else:
+        output_path = f"{output_path}.csv"
+
+    ap_params = {
+        "Smallpox": smallpox_param_sets,
+        "Measles": measles_param_sets
+    }
+    # Disease names and parameter sets
+    diseases = {
+        "Smallpox": smallpox_param_sets,
+        "Measles": measles_param_sets,
+        "Crimean–Congo hemorrhagic fever": cchf_param_sets,
+        "Ebola virus disease": evd_param_sets,
+        "Lassa fever": lassa_param_sets
+    }
+
+    results = []
+
+    for ap_name, ap_param_set in ap_params.items():
+        for disease_name, cp_param_set in diseases.items():
+            # WITH conversion
+            try:
+                cp_with = deepcopy(cp_param_set["with_conversion_hardcoded_cfr"])
+                demo_with = deepcopy(ap_param_set["with_conversion_hardcoded_cfr"])
+                ap_with = deepcopy(ap_param_set["with_conversion_hardcoded_cfr"])
+
+                result_with = poc_solve_and_plot_ap_demo_cp_with_or_without_converstion_in_four_zones_and_smaller_cfr_for_christians(
+                        ap_params=ap_with,
+                        demo_params=demo_with,
+                        cp_params=cp_with,
+                        conversion=True,
+                        # plot=False,
+                        plot_alive_christians=True
+                    )
+                alive_total_with = result_with["alive_total"]
+                alive_c_with = result_with["alive_c"]
+                alive_p_with = result_with["alive_p"]
+                percent_with = result_with["alive_c_percentage_of_total"]
+            except Exception:
+                alive_c_with = percent_with = None
+
+            # WITHOUT conversion
+            try:
+                cp_without = deepcopy(cp_param_set["without_conversion_hardcoded_cfr"])
+                demo_without = deepcopy(ap_param_set["without_conversion_hardcoded_cfr"])
+                ap_without = deepcopy(ap_param_set["without_conversion_hardcoded_cfr"])
+
+                result_without = poc_solve_and_plot_ap_demo_cp_with_or_without_converstion_in_four_zones_and_smaller_cfr_for_christians(
+                    ap_params=ap_without,
+                    demo_params=demo_without,
+                    cp_params=cp_without,
+                    conversion=False,
+                    # plot=False,
+                    plot_alive_christians=True
+                )
+
+                alive_total_without = result_without["alive_total"]
+                alive_c_without = result_without["alive_c"]
+                alive_p_without = result_without["alive_p"]
+                percent_without = result_without["alive_c_percentage_of_total"]
+
+            except Exception:
+                alive_c_without = percent_without = None
+
+            # Compute differences
+            try:
+                ratio_increase = percent_with - percent_without
+            except:
+                ratio_increase = 0.00
+
+            try:
+                if alive_c_with and alive_c_without:
+                    pop_increase = (1 - (alive_c_without / alive_c_with)) * 100
+                else:
+                    pop_increase = "#DIV/0!"
+            except:
+                pop_increase = "#DIV/0!"
+
+            results.append([
+                ap_name,
+                disease_name,
+                int(alive_c_with) if alive_c_with is not None else "",
+                f"{percent_with:}" if percent_with is not None else "",
+                int(alive_c_without) if alive_c_without is not None else "",
+                f"{percent_without}" if percent_without is not None else "",
+                f"{ratio_increase}",
+                f"{pop_increase}"
+            ])
+
+    columns = [
+        "Antonine Plague model",
+        "Cyprianic Plague model",
+        "Size of Christian subpopulation (individuals)",
+        "Total Christians (compared to total population; percent)",
+        "Size of Chistian subpopulation without conversion (individuals)",
+        "Total Christians without conversion (compared to total population; percent)",
+        "Christian subpopulation ratio increase (compared to modeled baseline without conversion; percent points)",
+        "Christian subpopulation increase (compared to modeled baseline without conversion; percent)"
+    ]
+
+    df = pd.DataFrame(results, columns=columns)
+
+    print("\n" + tabulate(df, headers="keys", tablefmt="github", showindex=False) + "\n")
+    df.to_csv(output_path, index=False)
+    print(f"[Saved] CSV output written to: {os.path.abspath(output_path)}")
+
+    return df
+
+
+def plot_alive_christians_full_timeline(solutions, time_segments, scenario_labels=None,
+                                        start_year=165, end_year=270,
+                                        y_tick_interval=50_000,
+                                        x_label="Year CE",
+                                        y_label="Alive Christians",
+                                        plot_title="Alive Christian Population (Antonine to Cyprianic Plagues)"):
+    """
+    Plots the population size of alive Christians across multiple simulation phases:
+    - Antonine Plague
+    - Demographic growth phase
+    - Plague of Cyprian
+
+    Parameters:
+    -----------
+    solutions : list
+        A list of solution objects from scipy.integrate.solve_ivp for each phase.
+    time_segments : list
+        A list of time arrays corresponding to each solution.
+    scenario_labels : list, optional
+        Labels for each segment (e.g., ["Antonine", "Demographic growth", "Cyprian"]).
+    start_year : int
+        Year CE when the Antonine Plague started.
+    end_year : int
+        Year CE when the timeline ends (after Cyprianic Plague).
+    y_tick_interval : int
+        Interval between y-axis ticks.
+    x_label, y_label, plot_title : str
+        Axis labels and plot title.
+    """
+    plt.figure(figsize=(12, 6))
+
+    total_years = []
+    total_population = []
+
+    for i, (sol, t) in enumerate(zip(solutions, time_segments)):
+        # Assuming the last compartment in your model is 'alive Christians'
+        # alive_christians = sol.y[-1]
+        alive_christians = sol.y[0, :] + sol.y[12, :] + sol.y[24, :] + sol.y[36, :]
+        offset = start_year if i == 0 else total_years[-1] + (t[1] - t[0])
+        years = np.linspace(offset, offset + (t[-1] - t[0]), len(t))
+
+        total_years.extend(years)
+        total_population.extend(alive_christians)
+
+        if scenario_labels and i < len(scenario_labels):
+            plt.plot(years, alive_christians, label=scenario_labels[i])
+        else:
+            plt.plot(years, alive_christians)
+
+    plt.title(plot_title)
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.grid(True)
+    plt.xticks(np.arange(start_year, end_year + 1, 5))
+    plt.yticks(np.arange(0, max(total_population) + y_tick_interval, y_tick_interval))
+    if scenario_labels:
+        plt.legend()
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_alive_christians_full_timeline_clean(solutions, time_segments, scenario_labels=None,
+                                        start_year=165, end_year=270,
+                                        y_tick_interval=50_000,
+                                        x_tick_interval=1,
+                                        x_label="Year CE",
+                                        y_label="Alive Christians",
+                                        plot_title="Alive Christian Population (Antonine to Cyprianic Plagues)"):
+
+    print("\n\nGot into the plot_alive_christians_full_timeline_clean function\n\n")
+
+    plt.figure(figsize=(14, 6))
+    total_years = []
+    total_population = []
+
+    for i, (sol, t) in enumerate(zip(solutions, time_segments)):
+        # ✅ Correct summation of compartments for alive Christians
+        alive_christians = (
+            sol.y[0, :] + sol.y[1, :] + sol.y[2, :] + sol.y[3, :] +
+            sol.y[12, :] + sol.y[13, :] + sol.y[14, :] + sol.y[15, :] +
+            sol.y[24, :] + sol.y[25, :] + sol.y[26, :] + sol.y[27, :] +
+            sol.y[36, :] + sol.y[37, :] + sol.y[38, :] + sol.y[39, :]
+        )
+
+        # ✅ Normalize timeline accumulation
+        t_norm = t - t[0]
+        if i == 0:
+            years = start_year + t_norm / 365.0  # Convert daily to yearly offset
+        else:
+            prev_end = total_years[-1]
+            years = prev_end + t_norm / 365.0
+
+        total_years.extend(years)
+        total_population.extend(alive_christians)
+
+        label = scenario_labels[i] if scenario_labels and i < len(scenario_labels) else None
+        plt.plot(years, alive_christians, linewidth=2, label=label)
+
+    if total_population:
+        ax = plt.gca()
+        ax.set_title(plot_title, fontsize=14, weight='bold')
+        ax.set_xlabel(x_label, fontsize=12)
+        ax.set_ylabel(y_label, fontsize=12)
+
+        # ✅ Gridlines
+        ax.grid(True, linestyle="--", alpha=0.6, which='major', axis='both')
+
+        # ✅ X-axis: show only yearly ticks
+        ax.set_xlim(start_year, end_year)
+        ax.xaxis.set_major_locator(MultipleLocator(1))
+        ax.xaxis.set_major_formatter(FuncFormatter(lambda x, _: f"{int(x)}"))
+        plt.setp(ax.get_xticklabels(), rotation=90, fontsize=8)
+
+        # ✅ Dynamic Y-axis ticks for clean spacing
+        ymax = max(total_population)
+
+        # Aim for 8–12 ticks
+        raw_step = ymax / 10
+        # Round step to nearest 1000 or 5000
+        if raw_step <= 1000:
+            step = 1000
+        elif raw_step <= 5000:
+            step = 5000
+        else:
+            step = int(round(raw_step / 1000.0)) * 1000
+
+        # Round ymax up to nearest multiple of step
+        ymax_rounded = ((int(ymax) // step) + 1) * step
+
+        ax.set_ylim(0, ymax_rounded)
+        ax.yaxis.set_major_locator(MultipleLocator(step))
+        ax.yaxis.set_major_formatter(FuncFormatter(lambda y, _: f"{int(y):,}"))
+
+        # ✅ Gridlines for major ticks only
+        ax.grid(which='major', linestyle='--', alpha=0.6, axis='y')
+
+        if scenario_labels:
+            ax.legend()
+        plt.tight_layout()
+        plt.show()
+    else:
+        print("⚠️ No data to plot: solutions or time arrays may be empty.")
+
+
+
 if __name__ == "__main__":
     # proof_of_concept_solve_and_plot_ap_demo_cp_with_conversion_and_smaller_cfr_for_christians_in_four_separate_zones()
     # proof_of_concept_solve_and_plot_ap_demo_cp_with_conversion_and_smaller_cfr_for_christians_with_four_dynamic_deltas()
@@ -3547,7 +3734,8 @@ if __name__ == "__main__":
 
     # table_2_runs(ap_params=smallpox_param_sets, output_path="table_2_results_smallpox.csv")
     # table_4_runs(output_path="table_4_results.csv")
-    table_2_runs(ap_params=smallpox_param_sets, output_path="table_like_2_results_smallpox_large_population.csv")
+    # table_2_runs(ap_params=smallpox_param_sets, output_path="table_like_2_results_smallpox_large_population.csv")
     # table_2_runs(ap_params=measles_param_sets, output_path="table_like_3_results_measles_large_population.csv")
     # table_4_runs(output_path="table_like_4_results_large_population.csv", )
-
+    table_4_runs(output_path="table_7_150m_results", with_timestamp=True)
+    # table_2_runs(output_path="tables_5-6_150m_results", with_timestamp=True)  # output_path="table_x_results_christians_4_ap_as_measles.csv")
