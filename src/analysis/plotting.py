@@ -26,8 +26,6 @@ from src.parameters.params import (
     default_two_cfrs_params,
     measles_seir_params,
     measles_seir_params_with_lower_cfr_for_c_and_starks_conversion,
-    # smallpox_seir_params_with_starks_conversion,
-    # smallpox_seir_params_without_conversion,
     smallpox_param_sets,
     measles_param_sets,
     cchf_param_sets,
@@ -80,28 +78,19 @@ def plot_seir_model(
 
     fig, ax = plt.subplots(figsize=(10, 6))
 
-    # Plot the specified compartments
     for index, label in zip(compartment_indices, compartment_labels):
         ax.plot(solution.t, solution.y[index, :], label=label)
 
-    # Set up the x-axis with year ticks and labels
-    # total_days = (end_year - start_year + 1) * 365
-    # year_tick_positions = np.arange(0, total_days, 365)
-    # year_tick_labels = np.arange(start_year, end_year + 1)
-    # ax.set_xticks(year_tick_positions)
-    # ax.set_xticklabels(year_tick_labels, rotation=45)
     total_days = (end_year - start_year + 1) * 365
     year_tick_positions = np.arange(0, total_days, 365)
     year_tick_labels = np.arange(start_year, end_year + 1)
     ax.set_xticks(year_tick_positions)
     ax.set_xticklabels(year_tick_labels, rotation=45)
 
-    # Optionally show every nth year label to avoid clutter
     for index, label in enumerate(ax.xaxis.get_ticklabels()):
         if index % every_nth_year != 0:
             label.set_visible(False)
 
-    # Set up the y-axis with custom ticks based on the maximum value across specified compartments
     y_max = min(np.max([np.max(solution.y[i, :]) for i in compartment_indices]), 1e8)
     print(f"y_max: {y_max}")
     y_ticks = np.arange(0, y_max + y_tick_interval, y_tick_interval)
@@ -112,7 +101,6 @@ def plot_seir_model(
     ax.set_yticks(y_ticks)
     ax.set_yticklabels(y_labels)
 
-    # Set axis' labels and plot title
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
     ax.set_title(plot_title)
@@ -132,11 +120,9 @@ def proof_of_concept_solve_and_plot_ap_as_smallpox_in_rome(
     # and not distinguishing Christians and Pagans.
     y0 = [0, 0, 0, 0, 0, 0, 923405, 0, 1, 0, 0, 0]
 
-    # Timeframe of simulation
     total_days = (end_year - start_year + 1) * 365
     t = np.arange(0, total_days)
 
-    # Solve the ODE
     def wrapper_for_solve_ivp(t, y):
         return direct_transmission_over_one_population_as_in_plos_paper(
             y, t, default_seir_params
@@ -146,8 +132,6 @@ def proof_of_concept_solve_and_plot_ap_as_smallpox_in_rome(
         wrapper_for_solve_ivp, [0, total_days], y0, method="BDF", t_eval=t
     )
 
-    # Solution indices and labels relevant only to the Pagan compartments
-    # (except for the A compartment, dead due to age and other natural causes).
     compartment_indices = [6, 7, 8, 9, 10]
     compartment_labels = [
         "Susceptible Pagans",
@@ -172,7 +156,6 @@ def proof_of_concept_solve_and_plot_ap_as_smallpox_over_two_subpopulations_in_em
     initial_christian_population=initial_christian_population,
     initial_pagan_population=initial_pagan_population,
 ):
-    # Initial conditions (Christian and Pagan populations defined in src.parameters.params)
     y0 = [
         initial_christian_population - 1,
         0,
@@ -188,11 +171,9 @@ def proof_of_concept_solve_and_plot_ap_as_smallpox_over_two_subpopulations_in_em
         0,
     ]
 
-    # Timeframe of simulation
     total_days = (end_year - start_year + 1) * 365
     t = np.arange(0, total_days)
 
-    # Solve the ODE
     def wrapper_for_solve_ivp(t, y):
         return direct_transmission_over_two_connected_subpopulations_seird_model(
             y, t, default_seir_params
@@ -202,8 +183,7 @@ def proof_of_concept_solve_and_plot_ap_as_smallpox_over_two_subpopulations_in_em
         wrapper_for_solve_ivp, [0, total_days], y0, method="BDF", t_eval=t
     )
 
-    # Solution indices and labels relevant to both Christian and Pagan compartments
-    # (except for the A compartment, dead due to age and other natural causes).
+
     compartment_indices = [0, 1, 2, 3, 4, 6, 7, 8, 9, 10]
     compartment_labels = [
         "Susceptible Christians",
@@ -261,8 +241,7 @@ def proof_of_concept_solve_and_plot_basic_demographic_development_after_ap(
         wrapper_for_solve_ivp_demographic, [0, total_days], y0, method="BDF", t_eval=t
     )
 
-    # Solution indices and labels relevant to both Christian and Pagan compartments
-    # (except for the A compartment, dead due to age and other natural causes).
+
     # compartment_indices = [0, 1, 2, 3, 4, 6, 7, 8, 9, 10]
     compartment_indices = [0, 6]
     compartment_labels = [
@@ -359,7 +338,6 @@ def proof_of_concept_solve_and_plot_ap_as_smallpox_over_two_subpopulations_with_
     total_days = (end_year - start_year + 1) * 365
     t = np.arange(0, total_days)
 
-    # Solve the ODE
     def wrapper_for_solve_ivp(t, y):
         return direct_transmission_over_two_connected_subpopulations_with_two_cfrs_seird_model(
             y, t, default_two_cfrs_params
@@ -369,8 +347,7 @@ def proof_of_concept_solve_and_plot_ap_as_smallpox_over_two_subpopulations_with_
         wrapper_for_solve_ivp, [0, total_days], y0, method="BDF", t_eval=t
     )
 
-    # Solution indices and labels relevant to both Christian and Pagan compartments
-    # (except for the A compartment, dead due to age and other natural causes).
+
     compartment_indices = [0, 1, 2, 3, 4, 6, 7, 8, 9, 10]
     compartment_labels = [
         "Susceptible Christians",
@@ -500,8 +477,7 @@ def proof_of_concept_solve_and_plot_ap_demography_and_cp_with_two_subpopulations
         t_eval=t_cp,
     )
 
-    # Solution indices and labels relevant to both Christian and Pagan compartments
-    # (except for the A compartment, dead due to age and other natural causes).
+
     compartment_indices = [0, 1, 2, 3, 4, 6, 7, 8, 9, 10]
     compartment_labels = [
         "Susceptible Christians",
@@ -565,8 +541,7 @@ def proof_of_concept_solve_and_plot_ap_only_demographic_development_with_convers
         wrapper_for_solve_ivp, [0, total_days], y0, method="BDF", t_eval=t
     )
 
-    # Solution indices and labels relevant to both Christian and Pagan compartments
-    # (except for the A compartment, dead due to age and other natural causes).
+
     compartment_indices = [0, 1, 2, 3, 4, 6, 7, 8, 9, 10]
     compartment_labels = [
         "Susceptible Christians",
@@ -620,7 +595,6 @@ def proof_of_concept_solve_and_plot_ap_with_conversion_and_smaller_cfr_for_chris
     total_days = (end_year - start_year + 1) * 365
     t = np.arange(0, total_days)
 
-    # Solve the ODE
     def wrapper_for_solve_ivp(t, y):
         return direct_transmission_over_two_connected_subpopulations_with_two_cfrs_and_conversion_seird_model(
             y, t, smallpox_seir_params_with_starks_conversion
@@ -630,8 +604,7 @@ def proof_of_concept_solve_and_plot_ap_with_conversion_and_smaller_cfr_for_chris
         wrapper_for_solve_ivp, [0, total_days], y0, method="BDF", t_eval=t
     )
 
-    # Solution indices and labels relevant to both Christian and Pagan compartments
-    # (except for the A compartment, dead due to age and other natural causes).
+
     compartment_indices = [0, 1, 2, 3, 4, 6, 7, 8, 9, 10]
     compartment_labels = [
         "Susceptible Christians",
@@ -760,8 +733,7 @@ def proof_of_concept_solve_and_plot_ap_demo_cp_with_conversion_and_smaller_cfr_f
         t_eval=t_cp,
     )
 
-    # Solution indices and labels relevant to both Christian and Pagan compartments
-    # (except for the A compartment, dead due to age and other natural causes).
+
     # compartment_indices = [0, 1, 2, 3, 4, 6, 7, 8, 9, 10]
     compartment_indices = [0, 1, 2, 3, 6, 7, 8, 9]
     compartment_labels = [
@@ -1018,8 +990,7 @@ def proof_of_concept_solve_and_plot_ap_demo_cp_with_conversion_and_smaller_cfr_f
         t_eval=t_cp,
     )
 
-    # Solution indices and labels relevant to both Christian and Pagan compartments
-    # (except for the A compartment, dead due to age and other natural causes).
+
     compartment_indices = [
         0, 1, 2, 3,  # Christians in Zone 1
         6, 7, 8, 9,  # Pagans in Zone 1
@@ -1506,8 +1477,7 @@ def proof_of_concept_solve_and_plot_ap_demo_cp_with_conversion_and_smaller_cfr_f
     )
 
 
-    # Solution indices and labels relevant to both Christian and Pagan compartments
-    # (except for the A compartment, dead due to age and other natural causes).
+
     compartment_indices = [
         0, 1, 2, 3,  # Christians in Zone 1
         6, 7, 8, 9,  # Pagans in Zone 1
@@ -1987,8 +1957,7 @@ def new_poc_solve_and_plot_ap_demo_cp_with_conversion_and_smaller_cfr_for_christ
         t_eval=t_cp
     )
 
-    # Solution indices and labels relevant to both Christian and Pagan compartments
-    # (except for the A compartment, dead due to age and other natural causes).
+
     compartment_indices = [
         0, 1, 2, 3,  # Christians in Zone 1
         6, 7, 8, 9,  # Pagans in Zone 1
@@ -2271,14 +2240,7 @@ def new_poc_solve_and_plot_ap_demo_cp_with_conversion_and_smaller_cfr_for_christ
         f"delta_4_c = {y0_cp[54]}\n"
         f"delta_4_p = {y0_cp[55]}\n"
     )
-    # y0_cp[48] = zeleners_initial_delta_1  # delta_1_c
-    # y0_cp[49] = zeleners_initial_delta_1  # delta_1_p
-    # y0_cp[50] = zeleners_initial_delta_2  # delta_2_c
-    # y0_cp[51] = zeleners_initial_delta_2  # delta_2_p
-    # y0_cp[52] = zeleners_initial_delta_3  # delta_3_c
-    # y0_cp[53] = zeleners_initial_delta_3  # delta_3_p
-    # y0_cp[54] = zeleners_initial_delta_4  # delta_4_c
-    # y0_cp[55] = zeleners_initial_delta_4  # delta_4_p
+
 
 def poc_solve_and_plot_ap_demo_cp_with_converstion_to_denser_of_four_zones_and_smaller_cfr_for_christians(
     start_year_ap=165,
@@ -2501,8 +2463,7 @@ def poc_solve_and_plot_ap_demo_cp_with_converstion_to_denser_of_four_zones_and_s
         t_eval=t_cp
     )
 
-    # Solution indices and labels relevant to both Christian and Pagan compartments
-    # (except for the A compartment, dead due to age and other natural causes).
+
     compartment_indices = [
         0, 1, 2, 3,  # Christians in Zone 1
         6, 7, 8, 9,  # Pagans in Zone 1
@@ -2793,7 +2754,6 @@ def poc_solve_and_plot_ap_demo_cp_with_converstion_to_denser_of_four_zones_and_s
     )
 
 
-# the main plotting function
 def poc_solve_and_plot_ap_demo_cp_with_or_without_converstion_in_four_zones_and_smaller_cfr_for_christians(
     start_year_ap=165,
     end_year_ap=189,
@@ -2885,7 +2845,6 @@ def poc_solve_and_plot_ap_demo_cp_with_or_without_converstion_in_four_zones_and_
     )
 
     # The demographic-development-without-a_specific-disease part:
-    # compartments_demographic = solution_ap.y[:, -1]
     compartments_demographic = solution_ap.y[:-8, -1]  # Exclude the last 8 elements (4 deltas for Christians + Pagans)
     y0_demographic = [max(0, compartment) for compartment in compartments_demographic]
 
@@ -3021,8 +2980,7 @@ def poc_solve_and_plot_ap_demo_cp_with_or_without_converstion_in_four_zones_and_
         t_eval=t_cp
     )
 
-    # Solution indices and labels relevant to both Christian and Pagan compartments
-    # (except for the A compartment, dead due to age and other natural causes).
+
     compartment_indices = [
         0, 1, 2, 3,  # Christians in Zone 1
         6, 7, 8, 9,  # Pagans in Zone 1
@@ -3154,7 +3112,6 @@ def poc_solve_and_plot_ap_demo_cp_with_or_without_converstion_in_four_zones_and_
         ap_disease = ap_params.disease_name_full
         cp_disease = cp_params.disease_name_full
         plot_alive_christians_full_timeline_clean(
-        # plot_alive_christians_full_timeline(
             solutions=[solution_ap, solution_demographic, solution_cp],
             time_segments=[t_ap, t_demographic, t_cp],
             scenario_labels=["Antonine Plague", "Post-plague growth", "Cyprianic Plague"],
@@ -3220,7 +3177,6 @@ def poc_solve_and_plot_ap_demo_cp_with_or_without_converstion_in_four_zones_and_
     d4_p = compartments_after_conversion[46]
     a4_p = compartments_after_conversion[47]
 
-    # Summing alive individuals for Christians and Pagans in all zones
     alive1_c = s1_c + e1_c + i1_c + r1_c
     alive1_p = s1_p + e1_p + i1_p + r1_p
 
@@ -3333,13 +3289,11 @@ def poc_solve_and_plot_ap_demo_cp_with_or_without_converstion_in_four_zones_and_
     return result
 
 
-def table_2_runs(output_path="table_2_results", with_timestamp=False):
+def table_2356_runs(output_path="table_2_results", with_timestamp=False):
     """
     Run simulations for:
-    Table 2 Summary of model output for Antonine Plague as smallpox and a different disease for Cyprianic Plague.
-
-
-    # """
+    Tables 2, 3, 5, and 6 Summary of model output for Antonine Plague as smallpox and a different disease for Cyprianic Plague.
+    """
     if with_timestamp:
         timestamp = time.time()
         output_path = f"{output_path}_{timestamp}.csv"
@@ -3351,7 +3305,6 @@ def table_2_runs(output_path="table_2_results", with_timestamp=False):
         "Measles": measles_param_sets
     }
 
-    # Disease names and parameter sets
     diseases = {
         "Smallpox": smallpox_param_sets,
         "Measles": measles_param_sets,
@@ -3453,12 +3406,10 @@ def table_2_runs(output_path="table_2_results", with_timestamp=False):
     return df
 
 
-def table_4_runs(output_path="table_4_results", with_timestamp=False):
+def table_47_runs(output_path="table_4_results", with_timestamp=False):
     """
     Run simulations for:
-    Table 4 Summary of model output for Antonine Plague as smallpox or measles and a different disease for Cyprianic Plague.
-
-
+    Tables 4 and 7 Summary of model output for Antonine Plague as smallpox or measles and a different disease for Cyprianic Plague.
     """
     if with_timestamp:
         timestamp = time.time()
@@ -3470,7 +3421,6 @@ def table_4_runs(output_path="table_4_results", with_timestamp=False):
         "Smallpox": smallpox_param_sets,
         "Measles": measles_param_sets
     }
-    # Disease names and parameter sets
     diseases = {
         "Smallpox": smallpox_param_sets,
         "Measles": measles_param_sets,
@@ -3572,71 +3522,8 @@ def table_4_runs(output_path="table_4_results", with_timestamp=False):
     return df
 
 
-def plot_alive_christians_full_timeline(solutions, time_segments, scenario_labels=None,
-                                        start_year=165, end_year=270,
-                                        y_tick_interval=50_000,
-                                        x_label="Year CE",
-                                        y_label="Alive Christians",
-                                        plot_title="Alive Christian Population (Antonine to Cyprianic Plagues)"):
-    """
-    Plots the population size of alive Christians across multiple simulation phases:
-    - Antonine Plague
-    - Demographic growth phase
-    - Plague of Cyprian
-
-    Parameters:
-    -----------
-    solutions : list
-        A list of solution objects from scipy.integrate.solve_ivp for each phase.
-    time_segments : list
-        A list of time arrays corresponding to each solution.
-    scenario_labels : list, optional
-        Labels for each segment (e.g., ["Antonine", "Demographic growth", "Cyprian"]).
-    start_year : int
-        Year CE when the Antonine Plague started.
-    end_year : int
-        Year CE when the timeline ends (after Cyprianic Plague).
-    y_tick_interval : int
-        Interval between y-axis ticks.
-    x_label, y_label, plot_title : str
-        Axis labels and plot title.
-    """
-    plt.figure(figsize=(12, 6))
-
-    total_years = []
-    total_population = []
-
-    for i, (sol, t) in enumerate(zip(solutions, time_segments)):
-        # Assuming the last compartment in your model is 'alive Christians'
-        # alive_christians = sol.y[-1]
-        alive_christians = sol.y[0, :] + sol.y[12, :] + sol.y[24, :] + sol.y[36, :]
-        offset = start_year if i == 0 else total_years[-1] + (t[1] - t[0])
-        years = np.linspace(offset, offset + (t[-1] - t[0]), len(t))
-
-        total_years.extend(years)
-        total_population.extend(alive_christians)
-
-        if scenario_labels and i < len(scenario_labels):
-            plt.plot(years, alive_christians, label=scenario_labels[i])
-        else:
-            plt.plot(years, alive_christians)
-
-    plt.title(plot_title)
-    plt.xlabel(x_label)
-    plt.ylabel(y_label)
-    plt.grid(True)
-    plt.xticks(np.arange(start_year, end_year + 1, 5))
-    plt.yticks(np.arange(0, max(total_population) + y_tick_interval, y_tick_interval))
-    if scenario_labels:
-        plt.legend()
-    plt.tight_layout()
-    plt.show()
-
-
 def plot_alive_christians_full_timeline_clean(solutions, time_segments, scenario_labels=None,
                                         start_year=165, end_year=270,
-                                        y_tick_interval=50_000,
-                                        x_tick_interval=1,
                                         x_label="Year CE",
                                         y_label="Alive Christians",
                                         plot_title="Alive Christian Population (Antonine to Cyprianic Plagues)"):
@@ -3648,7 +3535,6 @@ def plot_alive_christians_full_timeline_clean(solutions, time_segments, scenario
     total_population = []
 
     for i, (sol, t) in enumerate(zip(solutions, time_segments)):
-        # ✅ Correct summation of compartments for alive Christians
         alive_christians = (
             sol.y[0, :] + sol.y[1, :] + sol.y[2, :] + sol.y[3, :] +
             sol.y[12, :] + sol.y[13, :] + sol.y[14, :] + sol.y[15, :] +
@@ -3656,7 +3542,6 @@ def plot_alive_christians_full_timeline_clean(solutions, time_segments, scenario
             sol.y[36, :] + sol.y[37, :] + sol.y[38, :] + sol.y[39, :]
         )
 
-        # ✅ Normalize timeline accumulation
         t_norm = t - t[0]
         if i == 0:
             years = start_year + t_norm / 365.0  # Convert daily to yearly offset
@@ -3676,16 +3561,13 @@ def plot_alive_christians_full_timeline_clean(solutions, time_segments, scenario
         ax.set_xlabel(x_label, fontsize=12)
         ax.set_ylabel(y_label, fontsize=12)
 
-        # ✅ Gridlines
         ax.grid(True, linestyle="--", alpha=0.6, which='major', axis='both')
 
-        # ✅ X-axis: show only yearly ticks
         ax.set_xlim(start_year, end_year)
         ax.xaxis.set_major_locator(MultipleLocator(1))
         ax.xaxis.set_major_formatter(FuncFormatter(lambda x, _: f"{int(x)}"))
         plt.setp(ax.get_xticklabels(), rotation=90, fontsize=8)
 
-        # ✅ Dynamic Y-axis ticks for clean spacing
         ymax = max(total_population)
 
         # Aim for 8–12 ticks
@@ -3705,7 +3587,6 @@ def plot_alive_christians_full_timeline_clean(solutions, time_segments, scenario
         ax.yaxis.set_major_locator(MultipleLocator(step))
         ax.yaxis.set_major_formatter(FuncFormatter(lambda y, _: f"{int(y):,}"))
 
-        # ✅ Gridlines for major ticks only
         ax.grid(which='major', linestyle='--', alpha=0.6, axis='y')
 
         if scenario_labels:
@@ -3716,26 +3597,6 @@ def plot_alive_christians_full_timeline_clean(solutions, time_segments, scenario
         print("⚠️ No data to plot: solutions or time arrays may be empty.")
 
 
-
 if __name__ == "__main__":
-    # proof_of_concept_solve_and_plot_ap_demo_cp_with_conversion_and_smaller_cfr_for_christians_in_four_separate_zones()
-    # proof_of_concept_solve_and_plot_ap_demo_cp_with_conversion_and_smaller_cfr_for_christians_with_four_dynamic_deltas()
-    # new_poc_solve_and_plot_ap_demo_cp_with_conversion_and_smaller_cfr_for_christians_with_four_deltas()
-
-    # ap_params = deepcopy(smallpox_param_sets["without_conversion_literature_cfr"])
-    # demo_params = deepcopy(smallpox_param_sets["without_conversion_literature_cfr"])
-    # cp_params = deepcopy(cchf_param_sets["without_conversion_literature_cfr"])
-    # # poc_solve_and_plot_ap_demo_cp_with_converstion_to_denser_of_four_zones_and_smaller_cfr_for_christians()
-    # poc_solve_and_plot_ap_demo_cp_with_or_without_converstion_in_four_zones_and_smaller_cfr_for_christians(
-    #     ap_params=ap_params,
-    #     demo_params=demo_params,
-    #     cp_params=cp_params
-    # )
-
-    # table_2_runs(ap_params=smallpox_param_sets, output_path="table_2_results_smallpox.csv")
-    # table_4_runs(output_path="table_4_results.csv")
-    # table_2_runs(ap_params=smallpox_param_sets, output_path="table_like_2_results_smallpox_large_population.csv")
-    # table_2_runs(ap_params=measles_param_sets, output_path="table_like_3_results_measles_large_population.csv")
-    # table_4_runs(output_path="table_like_4_results_large_population.csv", )
-    table_4_runs(output_path="table_7_150m_results", with_timestamp=True)
-    # table_2_runs(output_path="tables_5-6_150m_results", with_timestamp=True)  # output_path="table_x_results_christians_4_ap_as_measles.csv")
+    table_2356_runs(output_path="tables_5-6_150m_results", with_timestamp=True)
+    table_47_runs(output_path="table_7_150m_results", with_timestamp=True)

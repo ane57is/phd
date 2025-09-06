@@ -160,8 +160,6 @@ def run_epidemic_scenarios_n_times(diseases,total_population=10_000, percentage_
     """
     total_population = total_population
     percentage_christians = percentage_christians  # 0.4% Christians
-    # percentage_christians = 0.2  # 20% Christians
-    # percentage_christians = 0.25  # 25% Christians
     num_pagans = int(total_population - total_population * percentage_christians)
     num_christians = int(total_population * percentage_christians)
 
@@ -200,7 +198,6 @@ def run_epidemic_scenarios_n_times(diseases,total_population=10_000, percentage_
                     disease=disease,
                     total_population=total_population,
                     percentage_christians=percentage_christians,
-                    # save_path="figure_2_network_pre_post.png"
                     save_path=f"figure_2_network_pre_post_{disease.replace(' ', '_').lower()}_stark_{str(percentage_christians).replace('.', '')}.png"
                 )
 
@@ -293,7 +290,7 @@ def plot_pre_post_clean(G_before, G_after, disease, total_population, percentage
 
 
 if __name__ == "__main__":
-    def create_tables_5678(total_population=10_000, n=1, print_csv=False):
+    def create_tables_891011(total_population=10_000, n=1, print_csv=False):
         diseases_literature_cfr = {
             "Stark's example": {
                 "christian_mortality": 0.1,
@@ -376,53 +373,20 @@ if __name__ == "__main__":
             }
         }
 
-        print("\n\nTable 8 Tie survival rates with fatality rate based on literature and 0.4% of population being Christian (2a)")
+        print("\n\nTable 11 Tie survival rates with fatality rate based on literature and 0.4% of population being Christian (2a)")
+
+        percentage_christians_options = [0.004, 0.2]
+        percentage_christians = percentage_christians_options[0]  # Default is 0.004
+
         run_epidemic_scenarios_n_times(
             # diseases_literature_cfr,
             diseases_hardcoded_cfr,
             total_population=total_population,
-            # percentage_christians=0.004,
-            percentage_christians=0.2,
+            percentage_christians=percentage_christians,
             n=n,
             to_csv=print_csv,
             output_path="table_11_2b_02.csv"
         )
 
-        # print("\n\nTable 6 Tie survival rates with fatality rate based on literature and 20% of population being Christian (2a)")
-        # run_epidemic_scenarios_n_times(
-        #     diseases_literature_cfr,
-        #     # diseases_hardcoded_cfr,
-        #     total_population=total_population,
-        #     # percentage_christians=0.004,
-        #     percentage_christians=0.2,
-        #     n=n,
-        #     to_csv=print_csv,
-        #     output_path="table_6_2a_02.csv"
-        # )
-        #
-        # print("\n\nTable 7 Tie survival rates with hardcoded lower fatality rate and 0.4% of population being Christian (2b).")
-        # run_epidemic_scenarios_n_times(
-        #     # diseases_literature_cfr,
-        #     diseases_hardcoded_cfr,
-        #     total_population=total_population,
-        #     percentage_christians=0.004,
-        #     # percentage_christians=0.2,
-        #     n=n,
-        #     to_csv=print_csv,
-        #     output_path="table_7_2b_0004.csv"
-        # )
-        #
-        # print("\n\nTable 8 Tie survival rates with hardcoded lower fatality rate and 20% of population being Christian (2b).")
-        # run_epidemic_scenarios_n_times(
-        #     # diseases_literature_cfr,
-        #     diseases_hardcoded_cfr,
-        #     total_population=total_population,
-        #     # percentage_christians=0.004,
-        #     percentage_christians=0.2,
-        #     n=n,
-        #     to_csv=print_csv,
-        #     output_path="table_8_2b_02.csv"
-        # )
 
-
-    create_tables_5678(total_population=10_000, n=100, print_csv=True)
+    create_tables_891011(total_population=10_000, n=100, print_csv=True)
