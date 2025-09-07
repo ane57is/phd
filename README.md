@@ -1,7 +1,7 @@
 # The Dynamics of the Spread of Christianity in the 2nd and 3rd Centuries CE
 ## A Computational Model of the Interaction between Christian and Pagan Populations in the Roman Empire during the Antonine Plague and the Plague of Cyprian 
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17070199.svg)](https://doi.org/10.5281/zenodo.17070199)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17070198.svg)](https://doi.org/10.5281/zenodo.17070198)
 
 This repository contains the code for a computational historiographical study of the Antonine Plague and Plague of Cyprian and their impact on the Christian and Pagan subpopulations of the Roman Empire. The study employs system dynamics and network models to assess whether the plausibility of scenarios hypothesized by William H. McNeill and Rodney Stark. The dissertation _The Dynamics of the Spread of Christianity in the 2nd and 3rd Centuries CE: A Computational Model of the Interaction between Christian and Pagan Populations in the Roman Empire during the Antonine Plague and the Plague of Cyprian_ contains the theoretical and methodological background of the code in this repository and the analysis of simulations performed with the functionality provided here.
 
