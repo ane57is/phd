@@ -271,7 +271,6 @@ def direct_transmission_over_four_pairs_of_connected_subpopulations_with_two_cfr
     n4_p = s4_p + e4_p + i4_p + r4_p
     n4 = n4_c + n4_p
 
-    # TODO: not sure if there is a need for this n variable as long as there is no interaction between zones 🤷🤔
     n = n1 + n2 + n3 + n4
 
     # Pagans converted to Christianity for all living compartments in each zone
@@ -521,9 +520,6 @@ def direct_transmission_with_four_dynamic_deltas_two_cfrs_and_conversion_in_pair
     if t % 365 == 0:  # Example: print yearly updates
         print(f"Time {t}: delta_1_c={delta_1_c}, delta_1_p={delta_1_p}")
 
-    # if t % (365 * 10) == 0:  # Log every 10 years
-    #     print(f"Time {t}: delta_1_c={delta_1_c}, delta_1_p={delta_1_p}")
-
     beta = parameters.beta
     sigma = parameters.sigma
     gamma = parameters.gamma
@@ -626,9 +622,6 @@ def direct_transmission_with_four_dynamic_deltas_two_cfrs_and_conversion_in_pair
 
     def non_negative(value):
         return max(0, value)
-        # return value
-        # return max(0, min(value, 1e10))  # Cap at 10 billion
-        # return max(0, min(value, 10_000_000))  # Cap at 10 billion
 
     # Zone 1
     # Christian compartments in Zone 1
@@ -928,26 +921,6 @@ def simple_demographic_model_subpopulation_pairs_with_conversion_to_dense_zones(
     n4_c = max(s4_c + e4_c + i4_c + r4_c, 0)
     n4_p = max(s4_p + e4_p + i4_p + r4_p, 0)
 
-    # Pagans converted to Christianity for all living compartments in each zone
-    # converted_s1 = min(conversion_rate * s1_c, s1_p, 0)
-    # converted_e1 = min(conversion_rate * e1_c, e1_p, 0)
-    # converted_i1 = min(conversion_rate * i1_c, i1_p, 0)
-    # converted_r1 = min(conversion_rate * r1_c, r1_p, 0)
-    #
-    # converted_s2 = min(conversion_rate * s2_c, s2_p, 0)
-    # converted_e2 = min(conversion_rate * e2_c, e2_p, 0)
-    # converted_i2 = min(conversion_rate * i2_c, i2_p, 0)
-    # converted_r2 = min(conversion_rate * r2_c, r2_p, 0)
-    #
-    # converted_s3 = min(conversion_rate * s3_c, s3_p, 0)
-    # converted_e3 = min(conversion_rate * e3_c, e3_p, 0)
-    # converted_i3 = min(conversion_rate * i3_c, i3_p, 0)
-    # converted_r3 = min(conversion_rate * r3_c, r3_p, 0)
-    #
-    # converted_s4 = min(conversion_rate * s4_c, s4_p, 0)
-    # converted_e4 = min(conversion_rate * e4_c, e4_p, 0)
-    # converted_i4 = min(conversion_rate * i4_c, i4_p, 0)
-    # converted_r4 = min(conversion_rate * r4_c, r4_p, 0)
     converted_s1 = min(conversion_rate * s1_c, s1_p)
     converted_e1 = min(conversion_rate * e1_c, e1_p)
     converted_i1 = min(conversion_rate * i1_c, i1_p)
@@ -1146,48 +1119,6 @@ def direct_transmission_over_four_pairs_of_connected_subpopulations_with_two_cfr
     n4_c = max(s4_c + e4_c + i4_c + r4_c, 0)
     n4_p = max(s4_p + e4_p + i4_p + r4_p, 0)
     n4 = max(n4_c + n4_p, 0)
-
-    # Pagans converted to Christianity for all living compartments in each zone
-    # converted_s1 = min(conversion_rate * s1_p, s1_p)
-    # converted_e1 = min(conversion_rate * e1_p, e1_p)
-    # converted_i1 = min(conversion_rate * i1_p, i1_p)
-    # converted_r1 = min(conversion_rate * r1_p, r1_p)
-    #
-    # converted_s2 = min(conversion_rate * s2_p, s2_p)
-    # converted_e2 = min(conversion_rate * e2_p, e2_p)
-    # converted_i2 = min(conversion_rate * i2_p, i2_p)
-    # converted_r2 = min(conversion_rate * r2_p, r2_p)
-    #
-    # converted_s3 = min(conversion_rate * s3_p, s3_p)
-    # converted_e3 = min(conversion_rate * e3_p, e3_p)
-    # converted_i3 = min(conversion_rate * i3_p, i3_p)
-    # converted_r3 = min(conversion_rate * r3_p, r3_p)
-    #
-    # converted_s4 = min(conversion_rate * s4_p, s4_p)
-    # converted_e4 = min(conversion_rate * e4_p, e4_p)
-    # converted_i4 = min(conversion_rate * i4_p, i4_p)
-    # converted_r4 = min(conversion_rate * r4_p, r4_p)
-
-    # Pagans converted to Christianity for all living compartments in each zone
-    # converted_s1 = min(conversion_rate * s1_c, s1_p, 0)
-    # converted_e1 = min(conversion_rate * e1_c, e1_p, 0)
-    # converted_i1 = min(conversion_rate * i1_c, i1_p, 0)
-    # converted_r1 = min(conversion_rate * r1_c, r1_p, 0)
-    #
-    # converted_s2 = min(conversion_rate * s2_c, s2_p, 0)
-    # converted_e2 = min(conversion_rate * e2_c, e2_p, 0)
-    # converted_i2 = min(conversion_rate * i2_c, i2_p, 0)
-    # converted_r2 = min(conversion_rate * r2_c, r2_p, 0)
-    #
-    # converted_s3 = min(conversion_rate * s3_c, s3_p, 0)
-    # converted_e3 = min(conversion_rate * e3_c, e3_p, 0)
-    # converted_i3 = min(conversion_rate * i3_c, i3_p, 0)
-    # converted_r3 = min(conversion_rate * r3_c, r3_p, 0)
-    #
-    # converted_s4 = min(conversion_rate * s4_c, s4_p, 0)
-    # converted_e4 = min(conversion_rate * e4_c, e4_p, 0)
-    # converted_i4 = min(conversion_rate * i4_c, i4_p, 0)
-    # converted_r4 = min(conversion_rate * r4_c, r4_p, 0)
 
     converted_s1 = min(conversion_rate * s1_c, s1_p)
     converted_e1 = min(conversion_rate * e1_c, e1_p)
