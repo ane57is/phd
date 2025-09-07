@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.integrate import solve_ivp
 import time
-from src.models.type_11_models.seir import (
+from src.models.type_1_models.seir import (
     direct_transmission_with_four_deltas_two_cfrs_and_conversion_in_pairs_seird_model
 )
 from src.parameters.params import (

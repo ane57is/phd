@@ -7,7 +7,7 @@ import os
 from scipy.integrate import solve_ivp
 from tabulate import tabulate
 import time
-from src.models.type_11_models.seir import (
+from src.models.type_1_models.seir import (
     direct_transmission_over_two_connected_subpopulations_seird_model,
     direct_transmission_over_one_population_as_in_plos_paper,
     direct_transmission_over_two_connected_subpopulations_with_two_cfrs_seird_model,
